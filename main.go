@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v3/middleware/recover"
 	"goamartha/common"
 	"goamartha/config"
-	"goamartha/route"
+	"goamartha/src/users"
 )
 
 func main() {
@@ -25,8 +25,7 @@ func main() {
 	app.Use(cors.New())
 
 	//routing
-	route.Borrower(app, db)
-	route.Payment(app, db)
+	users.Route(app, db)
 
 	//start app
 	common.Logger.Fatal(app.Listen(config.Get("PORT")))

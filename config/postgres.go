@@ -6,6 +6,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"os"
 	"strconv"
 	"time"
 )
@@ -25,10 +26,6 @@ type Config struct {
 }
 
 func ConfigDB(env Env) (*Config, error) {
-	port, err := strconv.Atoi(env.Get("DB_PORT"))
-	if err != nil {
-		return nil, fmt.Errorf("invalid DB_PORT: %w", err)
-	}
 
 	maxIdleConns, err := strconv.Atoi(env.Get("DB_MAX_IDLE_CONNS"))
 	if err != nil {
@@ -46,11 +43,6 @@ func ConfigDB(env Env) (*Config, error) {
 	}
 
 	config := &Config{
-		Host:            env.Get("DB_HOST"),
-		Port:            port,
-		User:            env.Get("DB_USER"),
-		Password:        env.Get("DB_PASSWORD"),
-		DBName:          env.Get("DB_NAME"),
 		SSLMode:         env.Get("DB_SSLMODE"),
 		MaxIdleConns:    maxIdleConns,
 		MaxOpenConns:    maxOpenConns,
@@ -59,10 +51,9 @@ func ConfigDB(env Env) (*Config, error) {
 	return config, nil
 }
 func ConnectDB(config *Config) error {
-
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s",
-		config.Host, config.User, config.Password, config.DBName, config.Port, config.SSLMode)
-	//dsn := os.Getenv("DATABASE_URL")
+	fmt.Println(config)
+	//dsn := fmt.Sprintf("host=%s users=%s password=%s dbname=%s port=%d sslmode=%s",config.Host, config.User, config.Password, config.DBName, config.Port, config.SSLMode)
+	dsn := os.Getenv("DATABASE_URL")
 
 	var err error
 	for retries := 0; retries < 10; retries++ { // create retry
