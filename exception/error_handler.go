@@ -18,7 +18,7 @@ func ErrorHandler(ctx fiber.Ctx, err error) error {
 	}
 	return ctx.Status(fiber.StatusInternalServerError).JSON(model.GeneralResponse{
 		Code:    500,
-		Message: "General Error",
+		Message: "Internal Error",
 		Data:    err.Error(),
 	})
 

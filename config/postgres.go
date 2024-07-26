@@ -62,25 +62,28 @@ func ConnectDB(config *Config) error {
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s",
 		config.Host, config.User, config.Password, config.DBName, config.Port, config.SSLMode)
+	//dsn := os.Getenv("DATABASE_URL")
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-	})
-	if err != nil {
-		return fmt.Errorf("failed to connect to database: %w", err)
+	var err error
+	for retries := 0; retries < 10; retries++ { // create retry
+		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+			Logger: logger.Default.LogMode(logger.Info),
+		})
+		if err == nil {
+			sqlDB, err := db.DB()
+			if err != nil {
+				return fmt.Errorf("failed to get database instance: %w", err)
+			}
+			sqlDB.SetMaxIdleConns(config.MaxIdleConns)
+			sqlDB.SetMaxOpenConns(config.MaxOpenConns)
+			sqlDB.SetConnMaxLifetime(config.ConnMaxLifetime)
+			DB = db
+			return nil
+		}
+		time.Sleep(2 * time.Second)
 	}
+	return fmt.Errorf("failed to connect to database after multiple attempts: %w", err)
 
-	sqlDB, err := db.DB()
-	if err != nil {
-		return fmt.Errorf("failed to get database instance: %w", err)
-	}
-
-	sqlDB.SetMaxIdleConns(config.MaxIdleConns)
-	sqlDB.SetMaxOpenConns(config.MaxOpenConns)
-	sqlDB.SetConnMaxLifetime(config.ConnMaxLifetime)
-
-	DB = db
-	return nil
 }
 
 func NewDB(env Env) *gorm.DB {

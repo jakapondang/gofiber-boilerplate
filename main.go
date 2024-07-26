@@ -25,8 +25,9 @@ func main() {
 	app.Use(cors.New())
 
 	//routing
-	route.Hello(app, db)
+	route.Borrower(app, db)
+	route.Payment(app, db)
 
 	//start app
-	common.Logger.Fatal(app.Listen(config.Get("SERVER.PORT")))
+	common.Logger.Fatal(app.Listen(config.Get("PORT")))
 }

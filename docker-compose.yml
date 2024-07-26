@@ -1,16 +1,6 @@
 version: '3.8'
 
 services:
-#  dbmysqlam:
-#    image: "mysql"
-#    restart: always
-#    environment:
-#      MYSQL_ROOT_PASSWORD: "root"
-#      MYSQL_DATABASE: "goamartha"
-#      MYSQL_USER: "admin"
-#      MYSQL_PASSWORD: "admin"
-#    ports:
-#      - "3308:3306"
   db:
     image: postgres:latest
     container_name: sql-db
@@ -19,6 +9,28 @@ services:
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: goamartha
     volumes:
+      - db-data:/var/lib/postgresql/data
       - ./db/sql:/docker-entrypoint-initdb.d
     ports:
-      - "5437:5432"
+      - "5432:5432"
+    networks:
+      - app-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+networks:
+  app-network:
+
+volumes:
+  db-data:
