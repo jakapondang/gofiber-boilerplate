@@ -1,3 +1,23 @@
-.idea
-*.iml
-logs/
+# Binaries
+main
+
+# Go vendor directory
+vendor/
+
+# Logs
+*.log
+
+# Configuration files
+config.yaml
+
+# IDE and editor settings
+.idea/
+.vscode/
+*.swp
+*~
+
+# OS generated files
+.DS_Store
+*.pyc
+*.pyo
+__pycache__/
