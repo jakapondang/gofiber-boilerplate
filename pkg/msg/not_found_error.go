@@ -1,4 +1,4 @@
-package utils
+package msg
 
 type NotFoundError struct {
 	Message string

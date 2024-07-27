@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v3"
 	"gofiber-boilerplatev3/internal/application/dto"
 	"gofiber-boilerplatev3/internal/application/usecases"
+	"gofiber-boilerplatev3/pkg/msg"
 	"net/http"
 	"strconv"
 )
@@ -21,6 +22,7 @@ func NewUserHandler(userUsecase usecases.UserUsecase) *UserHandler {
 
 // CreateUser handles POST requests for creating a new user
 func (h *UserHandler) CreateUser(c fiber.Ctx) error {
+	errT := "(CreateUser) "
 	var userDTO dto.UserDTO
 	if err := json.Unmarshal(c.Body(), &userDTO); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -28,24 +30,34 @@ func (h *UserHandler) CreateUser(c fiber.Ctx) error {
 
 	user, err := h.userUsecase.CreateUser(userDTO.Username, userDTO.Email)
 	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		panic(errT + err.Error())
 	}
 
 	return c.Status(http.StatusCreated).JSON(user)
+	//return c.Status(fiber.StatusCreated).JSON(utils.Response{
+	//	Code:    200,
+	//	Message: "Success",
+	//	Data:    user,
+	//})
 }
 
 // GetUserByID handles GET requests for retrieving a user by ID
 func (h *UserHandler) GetUserByID(c fiber.Ctx) error {
+	errT := "(GetUserByID) "
 	idStr := c.Params("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Invalid user ID"})
+		panic(msg.BadRequestError{
+			Message: errT + err.Error(),
+		})
 	}
 
 	user, err := h.userUsecase.GetUserByID(uint(id))
 	if err != nil {
-		return c.Status(http.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
+		panic(msg.NotFoundError{
+			Message: errT + err.Error(),
+		})
 	}
+	return c.Status(fiber.StatusOK).JSON(msg.Send(c, user))
 
-	return c.Status(http.StatusOK).JSON(user)
 }

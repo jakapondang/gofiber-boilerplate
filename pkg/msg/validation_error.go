@@ -1,4 +1,4 @@
-package utils
+package msg
 
 type ValidationError struct {
 	Message string
