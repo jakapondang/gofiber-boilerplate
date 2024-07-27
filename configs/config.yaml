@@ -1,0 +1,14 @@
+server:
+  port: 3000
+
+database:
+  url: postgres://admin:admin@db:5432/goboilerplate
+  #url: postgres://admin:admin@localhost:5432/goboilerplate
+  sslmode: disable
+  max_idle_conns: 10
+  max_open_conns: 100
+  conn_max_lifetime: 30m
+
+log:
+  level: info
+  file: logs/app.log
