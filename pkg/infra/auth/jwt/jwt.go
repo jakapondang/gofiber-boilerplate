@@ -1,4 +1,4 @@
-package auth
+package jwt
 
 import (
 	"github.com/golang-jwt/jwt/v4"
@@ -7,6 +7,10 @@ import (
 	"time"
 )
 
+type Token struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+}
 type AccessTokenClaims struct {
 	Data any `json:"data"`
 	jwt.RegisteredClaims

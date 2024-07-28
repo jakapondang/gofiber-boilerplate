@@ -5,7 +5,7 @@ import (
 	"github.com/gofiber/fiber/v3"
 	"gofiber-boilerplatev3/internal/v1/app/dto"
 	"gofiber-boilerplatev3/internal/v1/app/usecases"
-	"gofiber-boilerplatev3/pkg/infra/auth"
+	"gofiber-boilerplatev3/pkg/infra/auth/jwt"
 	"gofiber-boilerplatev3/pkg/infra/config"
 	"gofiber-boilerplatev3/pkg/msg"
 	"net/http"
@@ -37,18 +37,19 @@ func (h *UserHandler) RegisterUser(c fiber.Ctx) error {
 	if err != nil {
 		panic(errT + err.Error())
 	}
-	tokenAccess, err := auth.GenerateAccessToken(h.Config, resp)
+
+	tokenAccess, err := jwt.GenerateAccessToken(h.Config, resp)
 	if err != nil {
 		panic(errT + err.Error())
 	}
-	tokenRefresh, err := auth.GenerateRefreshToken(h.Config, resp.ID)
+	tokenRefresh, err := jwt.GenerateRefreshToken(h.Config, resp.ID)
 	if err != nil {
 		panic(errT + err.Error())
 	}
 
-	response := fiber.Map{
-		"access_token":  tokenAccess,
-		"refresh_token": tokenRefresh,
+	response := jwt.Token{
+		AccessToken:  tokenAccess,
+		RefreshToken: tokenRefresh,
 	}
 
 	return msg.Send(c, fiber.StatusCreated, response)
