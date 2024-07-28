@@ -2,7 +2,7 @@ package database
 
 import (
 	"fmt"
-	"gofiber-boilerplatev3/internal/infrastructure/config"
+	"gofiber-boilerplatev3/pkg/infra/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

@@ -1,0 +1,26 @@
+your_project/
+│
+├── internal/
+├───└──v1
+│      ├── app/
+│      │   ├── dto/
+│      │   ├── handlers/
+│      │   ├── usecases/
+│      ├── domain/
+│      │   ├── models/
+│      │   ├── repositories/
+│      │   ├── services/
+│      └── Interface/
+│         ├── grpc/
+│         └── http/
+│             ├── middlewares/
+│             └── routes/
+├── pkg/
+│   ├── infra/
+│   │   ├── config/
+│   │   └── database/
+│   │       └── sql/
+│   ├── msg/
+│   └── utils/
+├── main.go
+└── go.mod

@@ -6,6 +6,15 @@ import (
 	"time"
 )
 
+type Config struct {
+	Server     ServerConfig     `mapstructure:"server"`
+	Database   DatabaseConfig   `mapstructure:"database"`
+	Log        LogConfig        `mapstructure:"log"`
+	Encryption EncryptionConfig `mapstructure:"encryption"`
+}
+
+var AppConfig Config
+
 type ServerConfig struct {
 	Port string `mapstructure:"port"`
 }
@@ -28,13 +37,10 @@ type LogConfig struct {
 	File  string `mapstructure:"file"`
 }
 
-type Config struct {
-	Server   ServerConfig   `mapstructure:"server"`
-	Database DatabaseConfig `mapstructure:"database"`
-	Log      LogConfig      `mapstructure:"log"`
+type EncryptionConfig struct {
+	BcryptCost string `mapstructure:"bcrypt_cost"`
+	JwtSecret  string `mapstructure:"jwt_secret"`
 }
-
-var AppConfig Config
 
 func LoadConfig() error {
 	viper.AddConfigPath("./configs")

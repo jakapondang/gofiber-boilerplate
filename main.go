@@ -5,9 +5,9 @@ import (
 	"github.com/gofiber/fiber/v3/log"
 	"github.com/gofiber/fiber/v3/middleware/cors"
 	"github.com/gofiber/fiber/v3/middleware/recover"
-	"gofiber-boilerplatev3/internal/infrastructure/config"
-	"gofiber-boilerplatev3/internal/infrastructure/database"
-	"gofiber-boilerplatev3/internal/interface/http/routes"
+	"gofiber-boilerplatev3/internal/v1/interface/http/routes"
+	"gofiber-boilerplatev3/pkg/infra/config"
+	"gofiber-boilerplatev3/pkg/infra/database"
 	"gofiber-boilerplatev3/pkg/msg"
 	"gofiber-boilerplatev3/pkg/utils"
 )
@@ -31,7 +31,7 @@ func main() {
 	database.Connect(config.AppConfig)
 
 	// Setup routes
-	routes.SetupUserRoutes(app, database.DB)
+	v1.SetupUserRoutes(app, database.DB)
 
 	//log.Fatal(app.Listen(":" + config.AppConfig.Server.Port))
 	err = app.Listen(":" + config.AppConfig.Server.Port)

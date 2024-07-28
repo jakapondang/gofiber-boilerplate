@@ -1,11 +1,11 @@
-package routes
+package v1
 
 import (
 	"github.com/gofiber/fiber/v3"
-	"gofiber-boilerplatev3/internal/application/handlers"
-	"gofiber-boilerplatev3/internal/application/usecases"
-	"gofiber-boilerplatev3/internal/domain/repositories"
-	"gofiber-boilerplatev3/internal/domain/services"
+	"gofiber-boilerplatev3/internal/v1/app/handlers"
+	"gofiber-boilerplatev3/internal/v1/app/usecases"
+	"gofiber-boilerplatev3/internal/v1/domain/repositories"
+	"gofiber-boilerplatev3/internal/v1/domain/services"
 	"gorm.io/gorm"
 )
 
@@ -22,13 +22,13 @@ func SetupUserRoutes(app *fiber.App, db *gorm.DB) {
 
 	// Initialize handlers
 	userHandler := handlers.NewUserHandler(userUsecase)
-	api := app.Group("/api")
+	api := app.Group("/api/v1")
 
 	// Apply the authentication middleware to the user routes
 	//user := api.Group("/users", middlewares.AuthMiddleware)
 	//Without Auth
 	user := api.Group("/users")
 
-	user.Post("/", userHandler.CreateUser)
-	user.Get("/:id", userHandler.GetUserByID)
+	user.Post("/reg", userHandler.RegisterUser)
+
 }

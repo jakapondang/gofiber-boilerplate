@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -21,7 +22,13 @@ type User struct {
 	//Roles        []userroles.Entity `gorm:"many2many:user_roles"`
 }
 
-// NewUser creates a new User instance
-func NewUser(username, email string) *User {
-	return &User{Username: username, Email: email}
+// Table Name
+func (User) TableName() string {
+	return "users"
+}
+
+// UUID Unique
+func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
+	u.ID = uuid.New()
+	return
 }

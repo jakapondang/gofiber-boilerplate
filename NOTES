@@ -1,0 +1,19 @@
+Advantages of Keeping internal:
+Go Convention: In Go, internal is a standard convention to indicate packages that are not meant to be imported outside the module. This helps enforce encapsulation.
+Built-In Structure: It aligns with Go's module and package management practices.
+
+Internal Defination
+    V1 : version
+        App : Handle Controler input & output For App logic for business requirement
+        Domain : Handle Encapsulate domain-specific business logic.Perform operations related to domain entities,
+        Infra : Config & Database setup
+        Interface : Handle routing , middleware
+
+
+The BCRYPT_COST
+Default Cost: The default cost used by bcrypt is 10. This is generally a good balance between security and performance for most applications.
+Increasing Security: If you want to increase the security and your system can handle the additional computational load, you can set a higher cost, such as 12 or 14.
+Performance Considerations: Higher costs increase the time required to hash passwords, which can impact performance, especially on login and registration endpoints.between 10 and 14, balancing security and performance based on your specific needs and infrastructure capabilities.
+
+Development and Testing: A lower cost, such as 4, to speed up development and testing.
+Production: A cost between 10 and 14, balancing security and performance based on your specific needs and infrastructure capabilities.
