@@ -10,7 +10,7 @@ services:
       POSTGRES_DB: goboilerplate
     volumes:
       - db-data:/var/lib/postgresql/data
-      - ./db/sql:/docker-entrypoint-initdb.d
+      - ./pkg/infra/database/sql:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
     networks:
