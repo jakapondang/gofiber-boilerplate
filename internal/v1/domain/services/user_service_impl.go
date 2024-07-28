@@ -5,7 +5,7 @@ import (
 	"errors"
 	"gofiber-boilerplatev3/internal/v1/domain/models"
 	"gofiber-boilerplatev3/internal/v1/domain/repositories"
-	"gofiber-boilerplatev3/pkg/utils"
+	"gofiber-boilerplatev3/pkg/infra/auth"
 )
 
 // UserServiceImpl provides business logic related to users
@@ -28,7 +28,7 @@ func (s *UserServiceImpl) Create(ctx context.Context, res *models.User) (*models
 	}
 
 	//Create password hash
-	passwordHash, err := utils.HashPassword(res.PasswordHash)
+	passwordHash, err := auth.HashPassword(res.PasswordHash)
 	if err != nil {
 		return nil, err
 	}

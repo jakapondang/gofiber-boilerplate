@@ -31,7 +31,7 @@ func main() {
 	database.Connect(config.AppConfig)
 
 	// Setup routes
-	v1.SetupUserRoutes(app, database.DB)
+	v1.SetupUserRoutes(app, database.DB, config.AppConfig)
 
 	//log.Fatal(app.Listen(":" + config.AppConfig.Server.Port))
 	err = app.Listen(":" + config.AppConfig.Server.Port)

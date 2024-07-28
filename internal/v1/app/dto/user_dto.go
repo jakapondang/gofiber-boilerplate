@@ -1,17 +1,16 @@
 package dto
 
 import (
-	"github.com/google/uuid"
 	"gofiber-boilerplatev3/internal/v1/domain/models"
 	"time"
 )
 
 // UserDTO represents a user data transfer object
 type UserDTO struct {
-	ID        uuid.UUID  `json:"id"`
-	Username  string     `json:"username"`
-	Email     string     `json:"email"`
-	Password  string     `json:"password"`
+	ID       string `json:"id"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	//Password  string     `json:"password"`
 	FirstName string     `json:"firstName,omitempty"`
 	LastName  string     `json:"lastName,omitempty"`
 	IsActive  bool       `json:"isActive"`
@@ -38,10 +37,10 @@ func NewRegisterUser(req *UserRegisterDTO) *models.User {
 
 func NewUserDTO(res *models.User) *UserDTO {
 	return &UserDTO{
-		ID:        res.ID,
-		Username:  res.Username,
-		Email:     res.Email,
-		Password:  res.PasswordHash,
+		ID:       res.ID.String(),
+		Username: res.Username,
+		Email:    res.Email,
+		//Password:  res.PasswordHash,
 		FirstName: res.FirstName,
 		LastName:  res.LastName,
 		IsActive:  res.IsActive,

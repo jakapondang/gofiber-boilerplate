@@ -1,4 +1,4 @@
-package utils
+package auth
 
 import (
 	"gofiber-boilerplatev3/pkg/infra/config"

@@ -11,6 +11,7 @@ type Config struct {
 	Database   DatabaseConfig   `mapstructure:"database"`
 	Log        LogConfig        `mapstructure:"log"`
 	Encryption EncryptionConfig `mapstructure:"encryption"`
+	JWT        JWTConfig        `mapstructure:"jwt"`
 }
 
 var AppConfig Config
@@ -20,11 +21,6 @@ type ServerConfig struct {
 }
 
 type DatabaseConfig struct {
-	//Host            string        `mapstructure:"host"`
-	//Port            int           `mapstructure:"port"`
-	//User            string        `mapstructure:"user"`
-	//Password        string        `mapstructure:"password"`
-	//Name            string        `mapstructure:"name"`
 	Url             string        `mapstructure:"url"`
 	SSLMode         string        `mapstructure:"sslmode"`
 	MaxIdleConns    int           `mapstructure:"max_idle_conns"`
@@ -39,7 +35,13 @@ type LogConfig struct {
 
 type EncryptionConfig struct {
 	BcryptCost string `mapstructure:"bcrypt_cost"`
-	JwtSecret  string `mapstructure:"jwt_secret"`
+}
+type JWTConfig struct {
+	Secret          string        `mapstructure:"secret"`
+	AppName         string        `mapstructure:"app_name"`
+	Audience        string        `mapstructure:"audience"`
+	ExpAccessToken  time.Duration `mapstructure:"exp_access_token"`
+	ExpRefreshToken time.Duration `mapstructure:"exp_refresh_token"`
 }
 
 func LoadConfig() error {

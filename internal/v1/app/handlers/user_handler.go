@@ -5,18 +5,24 @@ import (
 	"github.com/gofiber/fiber/v3"
 	"gofiber-boilerplatev3/internal/v1/app/dto"
 	"gofiber-boilerplatev3/internal/v1/app/usecases"
+	"gofiber-boilerplatev3/pkg/infra/auth"
+	"gofiber-boilerplatev3/pkg/infra/config"
 	"gofiber-boilerplatev3/pkg/msg"
 	"net/http"
 )
 
 // UserHandler handles HTTP requests related to users
 type UserHandler struct {
-	userUsecase usecases.UserUsecase
+	UserUsecase usecases.UserUsecase
+	Config      config.Config
 }
 
 // NewUserHandler creates a new UserHandler instance
-func NewUserHandler(userUsecase usecases.UserUsecase) *UserHandler {
-	return &UserHandler{userUsecase: userUsecase}
+func NewUserHandler(userUsecase usecases.UserUsecase, config config.Config) *UserHandler {
+	return &UserHandler{
+		UserUsecase: userUsecase,
+		Config:      config,
+	}
 }
 
 // CreateUser handles POST requests for creating a new user
@@ -27,12 +33,25 @@ func (h *UserHandler) RegisterUser(c fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	resp, err := h.userUsecase.RegisterUser(c.Context(), &dto)
+	resp, err := h.UserUsecase.RegisterUser(c.Context(), &dto)
+	if err != nil {
+		panic(errT + err.Error())
+	}
+	tokenAccess, err := auth.GenerateAccessToken(h.Config, resp)
+	if err != nil {
+		panic(errT + err.Error())
+	}
+	tokenRefresh, err := auth.GenerateRefreshToken(h.Config, resp.ID)
 	if err != nil {
 		panic(errT + err.Error())
 	}
 
-	return msg.Send(c, fiber.StatusCreated, resp)
+	response := fiber.Map{
+		"access_token":  tokenAccess,
+		"refresh_token": tokenRefresh,
+	}
+
+	return msg.Send(c, fiber.StatusCreated, response)
 }
 
 //

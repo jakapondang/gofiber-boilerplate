@@ -1,8 +1,8 @@
 server:
   port: 3000
 database:
-  url: postgres://admin:admin@db:5432/goboilerplate
-  #url: postgres://admin:admin@localhost:5432/goboilerplate
+  #url: postgres://admin:admin@db:5432/goboilerplate
+  url: postgres://admin:admin@localhost:5432/goboilerplate
   sslmode: disable
   max_idle_conns: 10
   max_open_conns: 100
@@ -13,4 +13,9 @@ log:
 encryption:
   #bcrypt_cost: 10 ##Production Improve Security and reduce performance
   bcrypt_cost: 4
-  jwt_secret: your_jwt_secret_key
+jwt:
+  secret: goboilerplate
+  app_name: goboilerplate
+  audience: goboilerplate
+  exp_access_token: 15 #minute
+  exp_refresh_token: 24 #hour
