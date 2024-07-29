@@ -33,11 +33,20 @@ func (u *userUsecaseImpl) RegisterUser(ctx context.Context, req *dto.UserRegiste
 	return resp, nil
 }
 
-//
-//// GetUserByID retrieves a user by ID
-//func (u *userUsecaseImpl) GetUserByID(id uint) (*models.User, error) {
-//	return u.userService.GetUserByID(id)
-//}
+// GetUserByID retrieves a user by ID
+func (u *userUsecaseImpl) LoginUser(ctx context.Context, req *dto.UserLoginDTO) (*dto.UserTokenDTO, error) {
+	msg.Validate(req)
+	// Create a new Model User
+	res := dto.NewLoginUser(req)
+	//Create User
+	res, err := u.userService.GetUserByEmail(ctx, res)
+	if err != nil {
+		return nil, err
+	}
+	resp := dto.NewUserTokenDTO(res)
+	return resp, nil
+}
+
 //
 //// UpdateUser updates the details of an existing user
 //func (u *userUsecaseImpl) UpdateUser(id uint, username, email string) (*models.User, error) {

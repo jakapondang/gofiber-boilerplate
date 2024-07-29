@@ -31,5 +31,6 @@ func SetupUserRoutes(app *fiber.App, db *gorm.DB, config config.Config) {
 	user := api.Group("/users")
 
 	user.Post("/reg", userHandler.RegisterUser)
+	user.Post("/login", userHandler.LoginUser)
 
 }

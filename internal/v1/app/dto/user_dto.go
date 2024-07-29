@@ -28,6 +28,10 @@ type UserRegisterDTO struct {
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`
 }
+type UserLoginDTO struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
+}
 
 type UserTokenDTO struct {
 	ID                  string     `json:"id"`
@@ -64,6 +68,14 @@ func NewUserDTO(res *models.User) *UserDTO {
 func NewRegisterUser(req *UserRegisterDTO) *models.User {
 	return &models.User{
 		Username:     req.Username,
+		Email:        req.Email,
+		PasswordHash: req.Password,
+	}
+}
+
+// Trasnform User Login DTO to Model User
+func NewLoginUser(req *UserLoginDTO) *models.User {
+	return &models.User{
 		Email:        req.Email,
 		PasswordHash: req.Password,
 	}

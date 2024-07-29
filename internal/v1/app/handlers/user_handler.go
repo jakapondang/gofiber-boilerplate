@@ -36,12 +36,12 @@ func (h *UserHandler) RegisterUser(c fiber.Ctx) error {
 			})
 		}
 	}
-
+	// Register User
 	resp, err := h.UserUsecase.RegisterUser(c.Context(), &dto)
 	if err != nil {
 		panic(err.Error())
 	}
-
+	// Generate JWT
 	tokenAccess, err := jwt.GenerateAccessToken(h.Config, resp)
 	if err != nil {
 		panic(err.Error())
@@ -59,24 +59,36 @@ func (h *UserHandler) RegisterUser(c fiber.Ctx) error {
 	return middlewares.Send(c, fiber.StatusCreated, response)
 }
 
-//
-//// GetUserByID handles GET requests for retrieving a user by ID
-//func (h *UserHandler) GetUserByID(c fiber.Ctx) error {
-//	errT := "(GetUserByID) "
-//	idStr := c.Params("id")
-//	id, err := strconv.Atoi(idStr)
-//	if err != nil {
-//		panic(msg.BadRequestError{
-//			Message: errT + err.Error(),
-//		})
-//	}
-//
-//	user, err := h.userUsecase.GetUserByID(uint(id))
-//	if err != nil {
-//		panic(msg.NotFoundError{
-//			Message: errT + err.Error(),
-//		})
-//	}
-//	return c.Status(fiber.StatusOK).JSON(msg.Send(c, user))
-//
-//}
+// Login handles GET requests for retrieving a user by ID
+func (h *UserHandler) LoginUser(c fiber.Ctx) error {
+	var dto dto.UserLoginDTO
+	if err := json.Unmarshal(c.Body(), &dto); err != nil {
+		if err != nil {
+			panic(msg.BadRequestError{
+				Message: err.Error(),
+			})
+		}
+	}
+	// Login User
+	resp, err := h.UserUsecase.LoginUser(c.Context(), &dto)
+	if err != nil {
+		panic(msg.NotFoundError{
+			Message: err.Error(),
+		})
+	}
+	// Generate JWT
+	tokenAccess, err := jwt.GenerateAccessToken(h.Config, resp)
+	if err != nil {
+		panic(err.Error())
+	}
+	tokenRefresh, err := jwt.GenerateRefreshToken(h.Config, resp.ID)
+	if err != nil {
+		panic(err.Error())
+	}
+	response := jwt.Token{
+		AccessToken:  tokenAccess,
+		RefreshToken: tokenRefresh,
+	}
+	return middlewares.Send(c, fiber.StatusOK, response)
+
+}
