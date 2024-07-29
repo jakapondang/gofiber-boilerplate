@@ -28,31 +28,25 @@ type Response struct {
 	Data    interface{} `json:"data"`
 }
 
+type ResponseError struct {
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Error   interface{} `json:"error"`
+}
+
 func Send(c fiber.Ctx, code int, data interface{}) error {
 	var res Response
 	var message string
-
 	if code == fiber.StatusCreated {
 		message = "Successfully Created"
 	} else {
 		message = "Success"
 	}
-
 	res = Response{
 		Code:    code,
 		Message: message,
 		Data:    data,
 	}
-
-	// Log the response
-	requestID := c.Locals(RequestIDKey).(string)
-	logruspack.Logger.WithFields(logrus.Fields{
-		"request_id": requestID,
-		"status":     code,
-		"message":    message,
-		"data":       data,
-	}).Info("Response")
-
 	if code == fiber.StatusCreated {
 		return c.Status(fiber.StatusCreated).JSON(res)
 	} else {

@@ -27,30 +27,28 @@ func NewUserHandler(userUsecase usecases.UserUsecase, config config.Config) *Use
 
 // CreateUser handles POST requests for creating a new user
 func (h *UserHandler) RegisterUser(c fiber.Ctx) error {
-	errT := "(CreateUser) "
 
 	var dto dto.UserRegisterDTO
 	if err := json.Unmarshal(c.Body(), &dto); err != nil {
 		if err != nil {
 			panic(msg.BadRequestError{
-				RequestID: middlewares.RequestIDKey,
-				Message:   errT + err.Error(),
+				Message: err.Error(),
 			})
 		}
 	}
 
 	resp, err := h.UserUsecase.RegisterUser(c.Context(), &dto)
 	if err != nil {
-		panic(errT + err.Error())
+		panic(err.Error())
 	}
 
 	tokenAccess, err := jwt.GenerateAccessToken(h.Config, resp)
 	if err != nil {
-		panic(errT + err.Error())
+		panic(err.Error())
 	}
 	tokenRefresh, err := jwt.GenerateRefreshToken(h.Config, resp.ID)
 	if err != nil {
-		panic(errT + err.Error())
+		panic(err.Error())
 	}
 
 	response := jwt.Token{
