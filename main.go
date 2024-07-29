@@ -8,6 +8,7 @@ import (
 	"gofiber-boilerplatev3/internal/v1/interface/http/routes"
 	"gofiber-boilerplatev3/pkg/infra/config"
 	"gofiber-boilerplatev3/pkg/infra/database"
+	"gofiber-boilerplatev3/pkg/infra/middleware/logruspack"
 	"gofiber-boilerplatev3/pkg/msg"
 	"gofiber-boilerplatev3/pkg/utils"
 )
@@ -20,7 +21,7 @@ func main() {
 	}
 
 	// Initialize Logrus
-	utils.NewLogger()
+	logruspack.New()
 
 	//setup fiber
 	app := fiber.New(utils.NewFiberError())

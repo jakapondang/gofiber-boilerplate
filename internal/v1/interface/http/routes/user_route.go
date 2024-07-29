@@ -26,7 +26,7 @@ func SetupUserRoutes(app *fiber.App, db *gorm.DB, config config.Config) {
 	api := app.Group("/api/v1")
 
 	// Apply the authentication middleware to the user routes
-	//user := api.Group("/users", middlewares.AuthMiddleware)
+	//user := api.Group("/users", middleware.AuthMiddleware)
 	//Without Auth
 	user := api.Group("/users")
 

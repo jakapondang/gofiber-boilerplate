@@ -1,5 +1,5 @@
 your_project/
-│
+├── configs/
 ├── internal/
 ├───└──v1
 │      ├── app/
@@ -17,6 +17,8 @@ your_project/
 │             └── routes/
 ├── pkg/
 │   ├── infra/
+│   │   ├── auth/
+│   │   │   └── jwt/
 │   │   ├── config/
 │   │   └── database/
 │   │       └── sql/

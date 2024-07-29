@@ -8,5 +8,8 @@ import (
 func NewFiberError() fiber.Config {
 	return fiber.Config{
 		ErrorHandler: msg.ErrorHandler,
+		//Prefork:      false,
+		ServerHeader: "Fiber",
+		AppName:      "FiberApp",
 	}
 }

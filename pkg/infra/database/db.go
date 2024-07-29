@@ -3,22 +3,27 @@ package database
 import (
 	"fmt"
 	"gofiber-boilerplatev3/pkg/infra/config"
+	"gofiber-boilerplatev3/pkg/infra/middleware/logruspack"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 	"time"
 )
 
 var DB *gorm.DB
 
 // Connect initializes the database connection
-func Connect(config config.Config) error {
+func Connect(cfg config.Config) error {
 	var err error
-	dsn := config.Database
+	dsn := cfg.Database
 
-	for retries := 0; retries < 10; retries++ { // create retry
+	logger := logruspack.Logger // Access Logrus logger instance
+
+	retryCount := 10
+	retryDelay := 2 * time.Second
+
+	for retries := 0; retries < retryCount; retries++ {
 		db, err := gorm.Open(postgres.Open(dsn.Url), &gorm.Config{
-			Logger: logger.Default.LogMode(logger.Info),
+			Logger: &logruspack.CustomLog{Logger: logger}, // Use your custom logger
 		})
 		if err == nil {
 			sqlDB, err := db.DB()
@@ -29,9 +34,13 @@ func Connect(config config.Config) error {
 			sqlDB.SetMaxOpenConns(dsn.MaxOpenConns)
 			sqlDB.SetConnMaxLifetime(dsn.ConnMaxLifetime)
 			DB = db
+			logger.Info("Database connection established successfully.")
 			return nil
 		}
-		time.Sleep(2 * time.Second)
+
+		logger.Warnf("Database connection failed (attempt %d/%d): %v", retries+1, retryCount, err)
+		time.Sleep(retryDelay)
 	}
-	return fmt.Errorf("failed to connect to database after multiple attempts: %w", err)
+
+	return fmt.Errorf("failed to connect to database after %d attempts: %w", retryCount, err)
 }
