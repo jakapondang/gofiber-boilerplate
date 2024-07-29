@@ -29,8 +29,9 @@ type DatabaseConfig struct {
 }
 
 type LogConfig struct {
-	Level string `mapstructure:"level"`
-	File  string `mapstructure:"file"`
+	Level    string `mapstructure:"level"`
+	RootDir  string `mapstructure:"root_dir"`
+	FileName string `mapstructure:"file_name"`
 }
 
 type EncryptionConfig struct {

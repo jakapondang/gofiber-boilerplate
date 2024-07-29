@@ -2,6 +2,7 @@ package logruspack
 
 import (
 	"github.com/sirupsen/logrus"
+	"gofiber-boilerplatev3/pkg/infra/config"
 	"gopkg.in/natefinch/lumberjack.v2"
 	"io"
 	"os"
@@ -27,7 +28,7 @@ func (hook *LogFileHook) Levels() []logrus.Level {
 	return logrus.AllLevels
 }
 
-func New() {
+func New(cfg config.Config) {
 	logger := logrus.New()
 	logger.SetLevel(logrus.InfoLevel)
 
@@ -44,8 +45,8 @@ func New() {
 	logger.SetFormatter(textFormatter)
 
 	// Create logs directory if it doesn't exist
-	if _, err := os.Stat("logs"); os.IsNotExist(err) {
-		err := os.Mkdir("logs", 0755) // Adjust permissions as needed
+	if _, err := os.Stat(cfg.Log.RootDir); os.IsNotExist(err) {
+		err := os.Mkdir(cfg.Log.RootDir, 0755) // Adjust permissions as needed
 		if err != nil {
 			logger.Fatalf("Failed to create logs directory: %v", err)
 		}
@@ -53,7 +54,7 @@ func New() {
 
 	// Set up log file rotation
 	logFile := &lumberjack.Logger{
-		Filename:   "logs/logfile.log",
+		Filename:   cfg.Log.RootDir + "/" + cfg.Log.FileName,
 		MaxSize:    10, // megabytes
 		MaxBackups: 3,
 		MaxAge:     28, // days

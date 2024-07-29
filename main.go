@@ -21,7 +21,7 @@ func main() {
 	}
 
 	// Initialize Logrus
-	logruspack.New()
+	logruspack.New(config.AppConfig)
 
 	//setup fiber
 	app := fiber.New(utils.NewFiberError())

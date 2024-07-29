@@ -9,7 +9,8 @@ database:
   conn_max_lifetime: 30m
 log:
   level: info
-  file: logs/app.log
+  root_dir: logs
+  file_name: app.log
 encryption:
   #bcrypt_cost: 10 ##Production Improve Security and reduce performance
   bcrypt_cost: 4
