@@ -5,8 +5,8 @@ import (
 	"github.com/gofiber/fiber/v3"
 	"gofiber-boilerplatev3/internal/v1/app/dto"
 	"gofiber-boilerplatev3/internal/v1/app/usecases"
-	"gofiber-boilerplatev3/pkg/infra/auth/jwt"
 	"gofiber-boilerplatev3/pkg/infra/config"
+	"gofiber-boilerplatev3/pkg/infra/middleware/auth/jwt"
 	"gofiber-boilerplatev3/pkg/msg"
 	"net/http"
 )
