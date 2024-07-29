@@ -7,10 +7,6 @@ database:
   max_idle_conns: 10
   max_open_conns: 100
   conn_max_lifetime: 30m
-log:
-  level: info
-  root_dir: logs
-  file_name: app.log
 encryption:
   #bcrypt_cost: 10 ##Production Improve Security and reduce performance
   bcrypt_cost: 4

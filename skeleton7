@@ -17,12 +17,13 @@ your_project/
 │             └── routes/
 ├── pkg/
 │   ├── infra/
-│   │   ├── auth/
-│   │   │   └── jwt/
 │   │   ├── config/
 │   │   └── database/
 │   │       └── sql/
 │   ├── msg/
 │   └── utils/
+│        ├── auth/
+│        ├── jwt/
+│        └── msg/
 ├── main.go
 └── go.mod

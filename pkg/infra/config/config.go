@@ -1,15 +1,14 @@
 package config
 
 import (
-	"github.com/gofiber/fiber/v3/log"
 	"github.com/spf13/viper"
+	"gofiber-boilerplatev3/pkg/utils/logruspack"
 	"time"
 )
 
 type Config struct {
 	Server     ServerConfig     `mapstructure:"server"`
 	Database   DatabaseConfig   `mapstructure:"database"`
-	Log        LogConfig        `mapstructure:"log"`
 	Encryption EncryptionConfig `mapstructure:"encryption"`
 	JWT        JWTConfig        `mapstructure:"jwt"`
 }
@@ -26,12 +25,6 @@ type DatabaseConfig struct {
 	MaxIdleConns    int           `mapstructure:"max_idle_conns"`
 	MaxOpenConns    int           `mapstructure:"max_open_conns"`
 	ConnMaxLifetime time.Duration `mapstructure:"conn_max_lifetime"`
-}
-
-type LogConfig struct {
-	Level    string `mapstructure:"level"`
-	RootDir  string `mapstructure:"root_dir"`
-	FileName string `mapstructure:"file_name"`
 }
 
 type EncryptionConfig struct {
@@ -62,8 +55,8 @@ func LoadConfig() error {
 	return nil
 }
 
-func init() {
+func Init() {
 	if err := LoadConfig(); err != nil {
-		log.Fatalf("Error loading config file: %v", err)
+		logruspack.Logger.Fatalf("Error loading config file: %v", err)
 	}
 }

@@ -2,11 +2,14 @@ package logruspack
 
 import (
 	"github.com/sirupsen/logrus"
-	"gofiber-boilerplatev3/pkg/infra/config"
 	"gopkg.in/natefinch/lumberjack.v2"
 	"io"
 	"os"
+	"time"
 )
+
+const LogsRootDir = "logs"
+const LogsFileName = "app"
 
 var Logger *logrus.Logger
 
@@ -28,7 +31,7 @@ func (hook *LogFileHook) Levels() []logrus.Level {
 	return logrus.AllLevels
 }
 
-func New(cfg config.Config) {
+func Init() {
 	logger := logrus.New()
 	logger.SetLevel(logrus.InfoLevel)
 
@@ -45,16 +48,17 @@ func New(cfg config.Config) {
 	logger.SetFormatter(textFormatter)
 
 	// Create logs directory if it doesn't exist
-	if _, err := os.Stat(cfg.Log.RootDir); os.IsNotExist(err) {
-		err := os.Mkdir(cfg.Log.RootDir, 0755) // Adjust permissions as needed
+	if _, err := os.Stat(LogsRootDir); os.IsNotExist(err) {
+		err := os.Mkdir(LogsRootDir, 0755) // Adjust permissions as needed
 		if err != nil {
 			logger.Fatalf("Failed to create logs directory: %v", err)
 		}
 	}
 
 	// Set up log file rotation
+	date := time.Now()
 	logFile := &lumberjack.Logger{
-		Filename:   cfg.Log.RootDir + "/" + cfg.Log.FileName,
+		Filename:   LogsRootDir + "/" + LogsFileName + "_" + date.Format("01-02-2006") + ".log",
 		MaxSize:    10, // megabytes
 		MaxBackups: 3,
 		MaxAge:     28, // days
@@ -64,8 +68,8 @@ func New(cfg config.Config) {
 	// Set up JSON formatter for file output
 	jsonFormatter := &logrus.JSONFormatter{
 		FieldMap: logrus.FieldMap{
-			logrus.FieldKeyTime: "@timestamp",
-			logrus.FieldKeyMsg:  "message",
+			logrus.FieldKeyTime: "@time",
+			logrus.FieldKeyMsg:  "msg",
 		},
 	}
 
