@@ -3,7 +3,7 @@ package database
 import (
 	"fmt"
 	"gofiber-boilerplatev3/pkg/infra/config"
-	"gofiber-boilerplatev3/pkg/infra/middleware/logruspack"
+	logruspack2 "gofiber-boilerplatev3/pkg/utils/logruspack"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"time"
@@ -16,14 +16,14 @@ func Connect(cfg config.Config) error {
 	var err error
 	dsn := cfg.Database
 
-	logger := logruspack.Logger // Access Logrus logger instance
+	logger := logruspack2.Logger // Access Logrus logger instance
 
 	retryCount := 10
 	retryDelay := 2 * time.Second
 
 	for retries := 0; retries < retryCount; retries++ {
 		db, err := gorm.Open(postgres.Open(dsn.Url), &gorm.Config{
-			Logger: &logruspack.CustomLog{Logger: logger}, // Use your custom logger
+			Logger: &logruspack2.CustomLog{Logger: logger}, // Use your custom logger
 		})
 		if err == nil {
 			sqlDB, err := db.DB()

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"gofiber-boilerplatev3/internal/v1/domain/models"
 	"gofiber-boilerplatev3/internal/v1/domain/repositories"
-	"gofiber-boilerplatev3/pkg/infra/middleware/auth"
+	"gofiber-boilerplatev3/pkg/utils/auth"
 )
 
 // UserServiceImpl provides business logic related to users

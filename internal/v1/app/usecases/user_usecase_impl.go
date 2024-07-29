@@ -4,7 +4,7 @@ import (
 	"context"
 	"gofiber-boilerplatev3/internal/v1/app/dto"
 	"gofiber-boilerplatev3/internal/v1/domain/services"
-	"gofiber-boilerplatev3/pkg/msg"
+	"gofiber-boilerplatev3/pkg/utils/msg"
 )
 
 // userUsecaseImpl implements the UserUsecase interface

@@ -2,7 +2,7 @@ package utils
 
 import (
 	"github.com/gofiber/fiber/v3"
-	"gofiber-boilerplatev3/pkg/msg"
+	"gofiber-boilerplatev3/pkg/utils/msg"
 )
 
 func NewFiberError() fiber.Config {

@@ -5,10 +5,10 @@ import (
 	"github.com/gofiber/fiber/v3"
 	"gofiber-boilerplatev3/internal/v1/app/dto"
 	"gofiber-boilerplatev3/internal/v1/app/usecases"
+	"gofiber-boilerplatev3/internal/v1/interface/http/middlewares"
 	"gofiber-boilerplatev3/pkg/infra/config"
-	"gofiber-boilerplatev3/pkg/infra/middleware/auth/jwt"
-	"gofiber-boilerplatev3/pkg/msg"
-	"net/http"
+	"gofiber-boilerplatev3/pkg/utils/auth/jwt"
+	"gofiber-boilerplatev3/pkg/utils/msg"
 )
 
 // UserHandler handles HTTP requests related to users
@@ -28,9 +28,15 @@ func NewUserHandler(userUsecase usecases.UserUsecase, config config.Config) *Use
 // CreateUser handles POST requests for creating a new user
 func (h *UserHandler) RegisterUser(c fiber.Ctx) error {
 	errT := "(CreateUser) "
+
 	var dto dto.UserRegisterDTO
 	if err := json.Unmarshal(c.Body(), &dto); err != nil {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		if err != nil {
+			panic(msg.BadRequestError{
+				RequestID: middlewares.RequestIDKey,
+				Message:   errT + err.Error(),
+			})
+		}
 	}
 
 	resp, err := h.UserUsecase.RegisterUser(c.Context(), &dto)
@@ -52,7 +58,7 @@ func (h *UserHandler) RegisterUser(c fiber.Ctx) error {
 		RefreshToken: tokenRefresh,
 	}
 
-	return msg.Send(c, fiber.StatusCreated, response)
+	return middlewares.Send(c, fiber.StatusCreated, response)
 }
 
 //
