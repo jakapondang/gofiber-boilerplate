@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gofiber/fiber/v3"
 	"gofiber-boilerplatev3/internal/v1/app/dto"
 	"gofiber-boilerplatev3/internal/v1/app/usecases"
@@ -95,8 +96,19 @@ func (h *UserHandler) UserLogin(c fiber.Ctx) error {
 
 // Login handles GET requests for retrieving a user by ID
 func (h *UserHandler) UserProfile(c fiber.Ctx) error {
-	var dto dto.UserLoginDTO
+	claims := c.Locals("claims").(*jwt.AccessTokenClaims)
 
-	return middlewares.Send(c, fiber.StatusOK, dto)
+	// Convert claims to JSON string for easier readability
+	claimsJSON, err := json.MarshalIndent(claims, "", "  ")
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to parse claims",
+		})
+	}
+
+	// Print the claims
+	fmt.Println("Claims:", string(claimsJSON))
+
+	return middlewares.Send(c, fiber.StatusOK, claimsJSON)
 
 }

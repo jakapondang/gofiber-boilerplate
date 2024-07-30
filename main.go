@@ -22,20 +22,16 @@ func main() {
 	config.Init()
 
 	// Initialize JWT settings
-	jwt.SetConfig(
-		config.AppConfig.JWT.Secret,
-		config.AppConfig.JWT.AppName,
-		config.AppConfig.JWT.Audience,
-		config.AppConfig.JWT.ExpAccessToken,
-		config.AppConfig.JWT.ExpRefreshToken,
-	)
+	// Set JWT config
+	jwt.SetConfig(config.AppConfig.JWT)
+
 	//setup fiber
 	app := fiber.New(utils.NewFiberError())
 	app.Use(recover.New())
 	app.Use(cors.New())
 
 	// Register the request ID and logging middleware
-	//app.Use(middlewares.AuthMiddleware())
+	//app.Use(middlewares.AuthMiddleware()) // if you want all handler go through
 	app.Use(middlewares.RequestID())
 	app.Use(middlewares.LogRequestResponse())
 

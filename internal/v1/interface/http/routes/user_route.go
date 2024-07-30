@@ -34,6 +34,6 @@ func SetupUserRoutes(app *fiber.App, db *gorm.DB, config config.Config) {
 	v1.Post("/login", userHandler.UserLogin)
 
 	// Protected routes
-	protected := v1.Group("/protected", middlewares.AuthenticateJWT())
+	protected := v1.Group("/protected", middlewares.AuthMiddleware())
 	protected.Get("/profile", userHandler.UserProfile)
 }

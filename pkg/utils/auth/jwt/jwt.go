@@ -1,25 +1,28 @@
 package jwt
 
 import (
+	"errors"
+	"fmt"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
+	"gofiber-boilerplatev3/pkg/infra/config"
 	"time"
 )
 
 var (
-	secret          = "your_secret"
-	appName         = "your_app_name"
-	audience        = "your_service_or_frontend_name"
-	expAccessToken  = time.Minute * 15
-	expRefreshToken = time.Hour * 24
+	secret          string
+	appName         string
+	audience        string
+	expAccessToken  time.Duration
+	expRefreshToken time.Duration
 )
 
-func SetConfig(jwtSecret, jwtAppName, jwtAudience string, accessTokenExp, refreshTokenExp time.Duration) {
-	secret = jwtSecret
-	appName = jwtAppName
-	audience = jwtAudience
-	expAccessToken = accessTokenExp
-	expRefreshToken = refreshTokenExp
+func SetConfig(cfg config.JWTConfig) {
+	secret = cfg.Secret
+	appName = cfg.AppName
+	audience = cfg.Audience
+	expAccessToken = cfg.ExpAccessToken * time.Minute
+	expRefreshToken = cfg.ExpRefreshToken * time.Hour
 }
 
 type Token struct {
@@ -34,20 +37,19 @@ type AccessTokenClaims struct {
 
 type RefreshTokenClaims struct {
 	ID  string `json:"id"`
-	jti string `json:"jti"`
+	JTI string `json:"jti"`
 	jwt.RegisteredClaims
 }
 
-// GenerateAccessToken creates a new JWT access token
 func GenerateAccessToken(data any) (string, error) {
-	expirationTime := time.Now().Add(expAccessToken) // Access token expiration time
+	expirationTime := time.Now().Add(expAccessToken)
 	claims := &AccessTokenClaims{
 		Data: data,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			Issuer:    appName,
-			Audience:  jwt.ClaimStrings{audience},
+			Audience:  []string{audience},
 		},
 	}
 
@@ -60,17 +62,16 @@ func GenerateAccessToken(data any) (string, error) {
 	return tokenString, nil
 }
 
-// GenerateRefreshToken creates a new JWT refresh token
 func GenerateRefreshToken(id string) (string, error) {
-	expirationTime := time.Now().Add(expRefreshToken) // Refresh token expiration time
+	expirationTime := time.Now().Add(expRefreshToken)
 	claims := &RefreshTokenClaims{
 		ID:  id,
-		jti: uuid.New().String(),
+		JTI: uuid.New().String(),
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			Issuer:    appName,
-			Audience:  jwt.ClaimStrings{audience},
+			Audience:  []string{audience},
 		},
 	}
 
@@ -83,7 +84,6 @@ func GenerateRefreshToken(id string) (string, error) {
 	return tokenString, nil
 }
 
-// ValidateAccessToken validates a given JWT access token
 func ValidateAccessToken(tokenString string) (*AccessTokenClaims, error) {
 	claims := &AccessTokenClaims{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
@@ -91,19 +91,33 @@ func ValidateAccessToken(tokenString string) (*AccessTokenClaims, error) {
 	})
 
 	if err != nil {
-		return nil, err
+		if ve, ok := err.(*jwt.ValidationError); ok {
+			switch {
+			case ve.Errors&jwt.ValidationErrorMalformed != 0:
+				fmt.Println("Malformed token:", tokenString)
+				return nil, errors.New("malformed token")
+			case ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0:
+				fmt.Println("Token is either expired or not active yet:", tokenString)
+				return nil, errors.New("token is either expired or not active yet")
+			default:
+				fmt.Println("Token could not be handled:", tokenString)
+				return nil, errors.New("could not handle this token")
+			}
+		} else {
+			fmt.Println("Token parse error:", err)
+			return nil, err
+		}
 	}
 
 	if !token.Valid {
-		return nil, err
+		fmt.Println("Token is invalid:", tokenString)
+		return nil, errors.New("invalid token")
 	}
 
-	// Optionally check the audience and other claims here
-
+	fmt.Println("Token is valid:", tokenString)
 	return claims, nil
 }
 
-// ValidateRefreshToken validates a given JWT refresh token
 func ValidateRefreshToken(tokenString string) (*RefreshTokenClaims, error) {
 	claims := &RefreshTokenClaims{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
@@ -111,14 +125,29 @@ func ValidateRefreshToken(tokenString string) (*RefreshTokenClaims, error) {
 	})
 
 	if err != nil {
-		return nil, err
+		if ve, ok := err.(*jwt.ValidationError); ok {
+			switch {
+			case ve.Errors&jwt.ValidationErrorMalformed != 0:
+				fmt.Println("Malformed token:", tokenString)
+				return nil, errors.New("malformed token")
+			case ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0:
+				fmt.Println("Token is either expired or not active yet:", tokenString)
+				return nil, errors.New("token is either expired or not active yet")
+			default:
+				fmt.Println("Token could not be handled:", tokenString)
+				return nil, errors.New("could not handle this token")
+			}
+		} else {
+			fmt.Println("Token parse error:", err)
+			return nil, err
+		}
 	}
 
 	if !token.Valid {
-		return nil, err
+		fmt.Println("Token is invalid:", tokenString)
+		return nil, errors.New("invalid token")
 	}
 
-	// Optionally check the audience and other claims here
-
+	fmt.Println("Token is valid:", tokenString)
 	return claims, nil
 }
