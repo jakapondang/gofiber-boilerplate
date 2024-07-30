@@ -18,7 +18,7 @@ func NewUserUsecase(userService services.UserService) UserUsecase {
 }
 
 // CreateUser creates a new user and returns the created user
-func (u *userUsecaseImpl) RegisterUser(ctx context.Context, req *dto.UserRegisterDTO) (*dto.UserTokenDTO, error) {
+func (u *userUsecaseImpl) UserRegister(ctx context.Context, req *dto.UserRegisterDTO) (*dto.UserTokenDTO, error) {
 
 	msg.Validate(req)
 	// Create a new Model User
@@ -34,7 +34,7 @@ func (u *userUsecaseImpl) RegisterUser(ctx context.Context, req *dto.UserRegiste
 }
 
 // GetUserByID retrieves a user by ID
-func (u *userUsecaseImpl) LoginUser(ctx context.Context, req *dto.UserLoginDTO) (*dto.UserTokenDTO, error) {
+func (u *userUsecaseImpl) UserLogin(ctx context.Context, req *dto.UserLoginDTO) (*dto.UserTokenDTO, error) {
 	msg.Validate(req)
 	// Create a new Model User
 	res := dto.NewLoginUser(req)

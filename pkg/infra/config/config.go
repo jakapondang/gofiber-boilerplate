@@ -16,7 +16,7 @@ type Config struct {
 var AppConfig Config
 
 type ServerConfig struct {
-	Port string `mapstructure:"port"`
+	Port int `mapstructure:"port"`
 }
 
 type DatabaseConfig struct {
@@ -28,8 +28,9 @@ type DatabaseConfig struct {
 }
 
 type EncryptionConfig struct {
-	BcryptCost string `mapstructure:"bcrypt_cost"`
+	BcryptCost int `mapstructure:"bcrypt_cost"`
 }
+
 type JWTConfig struct {
 	Secret          string        `mapstructure:"secret"`
 	AppName         string        `mapstructure:"app_name"`

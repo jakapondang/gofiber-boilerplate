@@ -3,14 +3,12 @@ package auth
 import (
 	"gofiber-boilerplatev3/pkg/infra/config"
 	"golang.org/x/crypto/bcrypt"
-	"strconv"
 )
 
 // HashPassword hashes a plain text password
 func HashPassword(password string) (string, error) {
-	costStr := config.AppConfig.Encryption.BcryptCost
-	cost, err := strconv.Atoi(costStr)
-	if err != nil {
+	cost := config.AppConfig.Encryption.BcryptCost
+	if cost < 1 {
 		cost = bcrypt.DefaultCost
 	}
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), cost)

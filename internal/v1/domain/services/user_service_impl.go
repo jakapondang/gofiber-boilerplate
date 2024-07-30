@@ -49,6 +49,10 @@ func (s *UserServiceImpl) GetUserByEmail(ctx context.Context, req *models.User) 
 	if err != nil {
 		return nil, errors.New("User email not found")
 	}
+	// Check User Active
+	if !res.IsActive {
+		return nil, errors.New("User is not active , please contact administrator")
+	}
 	checkPass := auth.CheckPasswordHash(req.PasswordHash, res.PasswordHash)
 	if !checkPass {
 		return nil, errors.New("User email and password doesnt match")

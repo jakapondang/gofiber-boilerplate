@@ -2,17 +2,36 @@ package middlewares
 
 import (
 	"github.com/gofiber/fiber/v3"
-	"net/http"
+	"gofiber-boilerplatev3/pkg/utils/auth/jwt"
 )
 
-// AuthMiddleware is a simple authentication middleware
-func AuthMiddleware(c fiber.Ctx) error {
-	// Example: Check for a token in the header (this is a placeholder logic)
-	token := c.Get("Authorization")
-	if token == "" {
-		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
-	}
+func AuthenticateJWT() fiber.Handler {
+	return func(c fiber.Ctx) error {
+		// Get the token from the request header
+		tokenString := c.Get("Authorization")
+		if tokenString == "" {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Authorization header missing",
+			})
+		}
 
-	// Continue to next middleware/handler
-	return c.Next()
+		// Remove "Bearer " prefix if it exists
+		if len(tokenString) > 7 && tokenString[:7] == "Bearer " {
+			tokenString = tokenString[7:]
+		}
+
+		// Validate the token
+		claims, err := jwt.ValidateAccessToken(tokenString)
+		if err != nil {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Invalid or expired token",
+			})
+		}
+
+		// Optionally, you can set the claims in the context for use in handlers
+		c.Locals("claims", claims)
+
+		// Continue with the next handler
+		return c.Next()
+	}
 }

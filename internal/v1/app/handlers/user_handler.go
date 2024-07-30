@@ -26,7 +26,7 @@ func NewUserHandler(userUsecase usecases.UserUsecase, config config.Config) *Use
 }
 
 // CreateUser handles POST requests for creating a new user
-func (h *UserHandler) RegisterUser(c fiber.Ctx) error {
+func (h *UserHandler) UserRegister(c fiber.Ctx) error {
 
 	var dto dto.UserRegisterDTO
 	if err := json.Unmarshal(c.Body(), &dto); err != nil {
@@ -37,16 +37,16 @@ func (h *UserHandler) RegisterUser(c fiber.Ctx) error {
 		}
 	}
 	// Register User
-	resp, err := h.UserUsecase.RegisterUser(c.Context(), &dto)
+	resp, err := h.UserUsecase.UserRegister(c.Context(), &dto)
 	if err != nil {
 		panic(err.Error())
 	}
 	// Generate JWT
-	tokenAccess, err := jwt.GenerateAccessToken(h.Config, resp)
+	tokenAccess, err := jwt.GenerateAccessToken(resp)
 	if err != nil {
 		panic(err.Error())
 	}
-	tokenRefresh, err := jwt.GenerateRefreshToken(h.Config, resp.ID)
+	tokenRefresh, err := jwt.GenerateRefreshToken(resp.ID)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -60,7 +60,7 @@ func (h *UserHandler) RegisterUser(c fiber.Ctx) error {
 }
 
 // Login handles GET requests for retrieving a user by ID
-func (h *UserHandler) LoginUser(c fiber.Ctx) error {
+func (h *UserHandler) UserLogin(c fiber.Ctx) error {
 	var dto dto.UserLoginDTO
 	if err := json.Unmarshal(c.Body(), &dto); err != nil {
 		if err != nil {
@@ -70,18 +70,18 @@ func (h *UserHandler) LoginUser(c fiber.Ctx) error {
 		}
 	}
 	// Login User
-	resp, err := h.UserUsecase.LoginUser(c.Context(), &dto)
+	resp, err := h.UserUsecase.UserLogin(c.Context(), &dto)
 	if err != nil {
 		panic(msg.NotFoundError{
 			Message: err.Error(),
 		})
 	}
 	// Generate JWT
-	tokenAccess, err := jwt.GenerateAccessToken(h.Config, resp)
+	tokenAccess, err := jwt.GenerateAccessToken(resp)
 	if err != nil {
 		panic(err.Error())
 	}
-	tokenRefresh, err := jwt.GenerateRefreshToken(h.Config, resp.ID)
+	tokenRefresh, err := jwt.GenerateRefreshToken(resp.ID)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -90,5 +90,13 @@ func (h *UserHandler) LoginUser(c fiber.Ctx) error {
 		RefreshToken: tokenRefresh,
 	}
 	return middlewares.Send(c, fiber.StatusOK, response)
+
+}
+
+// Login handles GET requests for retrieving a user by ID
+func (h *UserHandler) UserProfile(c fiber.Ctx) error {
+	var dto dto.UserLoginDTO
+
+	return middlewares.Send(c, fiber.StatusOK, dto)
 
 }

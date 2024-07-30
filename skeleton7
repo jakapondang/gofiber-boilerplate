@@ -25,5 +25,6 @@ your_project/
 │        ├── auth/
 │        ├── jwt/
 │        └── msg/
+├── scripts/
 ├── main.go
 └── go.mod
