@@ -23,7 +23,8 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./configs:/app/configs
+#      - ./configs:/app/configs
+      - /etc/api/api-iinvite.id/configs:/app/configs
     depends_on:
       - db
     networks:
