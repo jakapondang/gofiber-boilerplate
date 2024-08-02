@@ -7,17 +7,17 @@ import (
 )
 
 // UserRepositoryImpl is the implementation of the UserRepository interface
-type UserRepositoryImpl struct {
+type userRepositoryImpl struct {
 	DB *gorm.DB
 }
 
 // NewUserRepository creates a new instance of UserRepositoryImpl
 func NewUserRepository(db *gorm.DB) UserRepository {
-	return &UserRepositoryImpl{DB: db}
+	return &userRepositoryImpl{DB: db}
 }
 
 // Save persists a user to the database
-func (r *UserRepositoryImpl) Create(ctx context.Context, res *models.User) error {
+func (r *userRepositoryImpl) Create(ctx context.Context, res *models.User) error {
 	err := r.DB.WithContext(ctx).Create(&res).Error
 	if err != nil {
 		return err
@@ -29,14 +29,33 @@ func (r *UserRepositoryImpl) Create(ctx context.Context, res *models.User) error
 }
 
 // FindByEmail retrieves a user by email from the database
-func (r *UserRepositoryImpl) FindByEmail(ctx context.Context, email string) (*models.User, error) {
+func (r *userRepositoryImpl) FindByEmail(ctx context.Context, email string) (*models.User, error) {
 	var user models.User
-	err := r.DB.WithContext(ctx).Unscoped().Where("email = ?", email).Last(&user).Error
+	err := r.DB.WithContext(ctx).Unscoped().Where("email = ?", email).First(&user).Error
 	if err != nil {
 		return nil, err
 	}
 
 	return &user, nil
+}
+
+// FindByEmail retrieves a user by email from the database
+func (r *userRepositoryImpl) FindByID(ctx context.Context, ID string) (*models.User, error) {
+	var user models.User
+	err := r.DB.WithContext(ctx).Unscoped().Where("id = ?", ID).First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (repository *userRepositoryImpl) Update(ctx context.Context, res *models.User) (*models.User, error) {
+	err := repository.DB.WithContext(ctx).Where("id = ?", res.ID).Updates(&res).Error
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 //
