@@ -50,12 +50,12 @@ func (r *userRepositoryImpl) FindByID(ctx context.Context, ID string) (*models.U
 	return &user, nil
 }
 
-func (repository *userRepositoryImpl) Update(ctx context.Context, res *models.User) (*models.User, error) {
+func (repository *userRepositoryImpl) Update(ctx context.Context, res *models.User) error {
 	err := repository.DB.WithContext(ctx).Where("id = ?", res.ID).Updates(&res).Error
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return res, nil
+	return nil
 }
 
 //
