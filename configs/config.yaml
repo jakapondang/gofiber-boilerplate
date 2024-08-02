@@ -16,3 +16,8 @@ jwt:
   audience: goboilerplate
   exp_access_token: 15 #minute
   exp_refresh_token: 24 #hour
+mail:
+  host: smtp.example.com
+  port: 587
+  username: your-email@example.com
+  password: your-email-password

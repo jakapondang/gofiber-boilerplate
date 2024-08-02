@@ -11,6 +11,7 @@ type Config struct {
 	Database   DatabaseConfig   `mapstructure:"database"`
 	Encryption EncryptionConfig `mapstructure:"encryption"`
 	JWT        JWTConfig        `mapstructure:"jwt"`
+	Mail       MailConfig       `mapstructure:"mail"`
 }
 
 var AppConfig Config
@@ -38,7 +39,14 @@ type JWTConfig struct {
 	ExpAccessToken  time.Duration `mapstructure:"exp_access_token"`
 	ExpRefreshToken time.Duration `mapstructure:"exp_refresh_token"`
 }
+type MailConfig struct {
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	Username string `mapstructure:"username"`
+	Password string `mapstructure:"password"`
+}
 
+// other configurations
 func LoadConfig() error {
 	viper.AddConfigPath("./configs")
 	viper.SetConfigName("config")

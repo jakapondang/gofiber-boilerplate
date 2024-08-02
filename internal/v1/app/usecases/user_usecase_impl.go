@@ -16,14 +16,13 @@ func NewUserUsecase(userService services.UserService) UserUsecase {
 	return &userUsecaseImpl{userService: userService}
 }
 
-// GetUserByID retrieves a user by ID
-func (u *userUsecaseImpl) UserFindByID(ctx context.Context, ID string) (*dto.UserTokenDTO, error) {
-
-	//Create User
+// UserFindByID retrieves a user by ID
+func (u *userUsecaseImpl) UserFindByID(ctx context.Context, ID string) (*dto.UserDTO, error) {
+	//Get User
 	res, err := u.userService.GetUserByID(ctx, ID)
 	if err != nil {
 		return nil, err
 	}
-	resp := dto.NewUserTokenDTO(res)
+	resp := dto.NewUser(res)
 	return resp, nil
 }

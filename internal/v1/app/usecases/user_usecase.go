@@ -7,7 +7,7 @@ import (
 
 // UserUsecase defines the interface for user-related use cases
 type UserUsecase interface {
-	UserFindByID(ctx context.Context, ID string) (*dto.UserTokenDTO, error)
-	//UpdateUser(id uint, username, email string) (*models.User, error)
+	UserFindByID(ctx context.Context, ID string) (*dto.UserDTO, error)
+	//UpdateUser(id uint, username, mail string) (*models.User, error)
 	//DeleteUser(id uint) error
 }

@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// SetupUserRoutes sets up the user routes
+// SetupAuthRoutes sets up the auth routes
 func SetupAuthRoutes(app *fiber.App, db *gorm.DB, config config.Config) {
 	// Initialize repositories
 	repo := repositories.NewUserRepository(db)
@@ -31,5 +31,6 @@ func SetupAuthRoutes(app *fiber.App, db *gorm.DB, config config.Config) {
 	// Public routes
 	v1.Post("/register", handler.AuthRegister)
 	v1.Post("/login", handler.AuthLogin)
+	v1.Post("/refresh-token", handler.RefreshToken)
 
 }

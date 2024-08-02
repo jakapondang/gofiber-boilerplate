@@ -2,7 +2,6 @@ package jwt
 
 import (
 	"errors"
-	"fmt"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 	"gofiber-boilerplatev3/pkg/infra/config"
@@ -56,7 +55,7 @@ func GenerateAccessToken(data any) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString([]byte(secret))
 	if err != nil {
-		return "", err
+		return "", errors.New("Generate Access Token :" + err.Error())
 	}
 
 	return tokenString, nil
@@ -78,7 +77,7 @@ func GenerateRefreshToken(id string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString([]byte(secret))
 	if err != nil {
-		return "", err
+		return "", errors.New("Generate Refresh Token :" + err.Error())
 	}
 
 	return tokenString, nil
@@ -94,27 +93,27 @@ func ValidateAccessToken(tokenString string) (*AccessTokenClaims, error) {
 		if ve, ok := err.(*jwt.ValidationError); ok {
 			switch {
 			case ve.Errors&jwt.ValidationErrorMalformed != 0:
-				fmt.Println("Malformed token:", tokenString)
-				return nil, errors.New("malformed token")
+				//fmt.Println("Malformed token:", tokenString)
+				return nil, errors.New("ValidateAccessToken :malformed token")
 			case ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0:
-				fmt.Println("Token is either expired or not active yet:", tokenString)
-				return nil, errors.New("token is either expired or not active yet")
+				//fmt.Println("Token is either expired or not active yet:", tokenString)
+				return nil, errors.New("ValidateAccessToken : token is either expired or not active yet")
 			default:
-				fmt.Println("Token could not be handled:", tokenString)
-				return nil, errors.New("could not handle this token")
+				//fmt.Println("Token could not be handled:", tokenString)
+				return nil, errors.New("ValidateAccessToken : could not handle this token")
 			}
 		} else {
-			fmt.Println("Token parse error:", err)
+			//fmt.Println("Token parse error:", err)
 			return nil, err
 		}
 	}
 
 	if !token.Valid {
-		fmt.Println("Token is invalid:", tokenString)
-		return nil, errors.New("invalid token")
+		//fmt.Println("Token is invalid:", tokenString)
+		return nil, errors.New("ValidateAccessToken : invalid token")
 	}
 
-	fmt.Println("Token is valid:", tokenString)
+	//fmt.Println("Token is valid:", tokenString)
 	return claims, nil
 }
 
@@ -128,26 +127,26 @@ func ValidateRefreshToken(tokenString string) (*RefreshTokenClaims, error) {
 		if ve, ok := err.(*jwt.ValidationError); ok {
 			switch {
 			case ve.Errors&jwt.ValidationErrorMalformed != 0:
-				fmt.Println("Malformed token:", tokenString)
-				return nil, errors.New("malformed token")
+				//fmt.Println("Malformed token:", tokenString)
+				return nil, errors.New("ValidateRefreshToken :malformed token")
 			case ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0:
-				fmt.Println("Token is either expired or not active yet:", tokenString)
-				return nil, errors.New("token is either expired or not active yet")
+				//fmt.Println("Token is either expired or not active yet:", tokenString)
+				return nil, errors.New("ValidateRefreshToken :token is either expired or not active yet")
 			default:
-				fmt.Println("Token could not be handled:", tokenString)
-				return nil, errors.New("could not handle this token")
+				//fmt.Println("Token could not be handled:", tokenString)
+				return nil, errors.New("ValidateRefreshToken :could not handle this token")
 			}
 		} else {
-			fmt.Println("Token parse error:", err)
+			//fmt.Println("Token parse error:", err)
 			return nil, err
 		}
 	}
 
 	if !token.Valid {
-		fmt.Println("Token is invalid:", tokenString)
-		return nil, errors.New("invalid token")
+		//fmt.Println("Token is invalid:", tokenString)
+		return nil, errors.New("ValidateRefreshToken :invalid token")
 	}
 
-	fmt.Println("Token is valid:", tokenString)
+	//fmt.Println("Token is valid:", tokenString)
 	return claims, nil
 }

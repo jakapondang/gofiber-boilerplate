@@ -21,10 +21,10 @@ func NewUserService(userRepo repositories.UserRepository) UserService {
 // CreateUser creates a new user and persists it in the repository
 func (s *UserServiceImpl) Create(ctx context.Context, res *models.User) (*models.User, error) {
 
-	// Check if a user with the same email already exists
+	// Check if a user with the same mail already exists
 	existingUser, _ := s.userRepo.FindByEmail(ctx, res.Email)
 	if existingUser != nil {
-		return nil, errors.New("user with this email already exists")
+		return nil, errors.New("user with this mail already exists")
 	}
 
 	//Create password hash
@@ -44,10 +44,10 @@ func (s *UserServiceImpl) Create(ctx context.Context, res *models.User) (*models
 
 // GetUserByEmail retrieves a user by Email from the repository
 func (s *UserServiceImpl) GetUserByEmail(ctx context.Context, req *models.User) (*models.User, error) {
-	// Check if a user with the same email already exists
+	// Check if a user with the same mail already exists
 	res, err := s.userRepo.FindByEmail(ctx, req.Email)
 	if err != nil {
-		return nil, errors.New("User email not found")
+		return nil, errors.New("User mail not found")
 	}
 	// Check User Active
 	if !res.IsActive {
@@ -55,14 +55,14 @@ func (s *UserServiceImpl) GetUserByEmail(ctx context.Context, req *models.User) 
 	}
 	checkPass := auth.CheckPasswordHash(req.PasswordHash, res.PasswordHash)
 	if !checkPass {
-		return nil, errors.New("User email and password doesnt match")
+		return nil, errors.New("User mail and password doesnt match")
 	}
 	return res, nil
 }
 
 // GetUserByID retrieves a user by ID from the repository
 func (s *UserServiceImpl) GetUserByID(ctx context.Context, ID string) (*models.User, error) {
-	// Check if a user with the same email already exists
+	// Check if a user with the same mail already exists
 	res, err := s.userRepo.FindByID(ctx, ID)
 	if err != nil {
 		return nil, errors.New("User not found")
@@ -71,48 +71,11 @@ func (s *UserServiceImpl) GetUserByID(ctx context.Context, ID string) (*models.U
 	return res, nil
 }
 
-//// UpdateUser updates the details of an existing user
-//func (s *UserServiceImpl) UpdateUser(id uint, username, email string) (*models.User, error) {
-//	if username == "" || email == "" {
-//		return nil, errors.New("username and email cannot be empty")
-//	}
-//
-//	// Retrieve the existing user
-//	user, err := s.userRepo.FindByID(id)
-//	if err != nil {
-//		return nil, err
-//	}
-//	if user == nil {
-//		return nil, errors.New("user not found")
-//	}
-//
-//	// Update the user details
-//	user.Username = username
-//	user.Email = email
-//
-//	// Save the updated user entity
-//	if err := s.userRepo.Save(user); err != nil {
-//		return nil, err
-//	}
-//
-//	return user, nil
-//}
-//
-//// DeleteUser deletes a user by ID
-//func (s *UserServiceImpl) DeleteUser(id uint) error {
-//	// Check if the user exists
-//	user, err := s.userRepo.FindByID(id)
-//	if err != nil {
-//		return err
-//	}
-//	if user == nil {
-//		return errors.New("user not found")
-//	}
-//
-//	// Delete the user from the repository
-//	if err := s.userRepo.Delete(id); err != nil {
-//		return err
-//	}
-//
-//	return nil
-//}
+// Update update a user and persists it in the repository
+func (s *UserServiceImpl) Update(ctx context.Context, res *models.User) error {
+	// Save the user entity in the repository
+	if err := s.userRepo.Update(ctx, res); err != nil {
+		return err
+	}
+	return nil
+}
