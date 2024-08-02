@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"fmt"
 	"github.com/gofiber/fiber/v3"
 	"gofiber-boilerplatev3/pkg/utils/auth/jwt"
 )
@@ -24,7 +23,7 @@ func AuthMiddleware() fiber.Handler {
 		// Validate the token
 		claims, err := jwt.ValidateAccessToken(tokenString)
 		if err != nil {
-			fmt.Println("Token validation error:", err) // Debugging line to print error details
+			//fmt.Println("Token validation error:", err) // Debugging line to print error details
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"error": "Invalid or expired token",
 			})

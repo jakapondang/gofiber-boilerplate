@@ -41,6 +41,7 @@ func main() {
 	}
 
 	// Setup routes
+	v1.SetupAuthRoutes(app, database.DB, config.AppConfig)
 	v1.SetupUserRoutes(app, database.DB, config.AppConfig)
 
 	//App start listen port

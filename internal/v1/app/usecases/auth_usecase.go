@@ -6,8 +6,9 @@ import (
 )
 
 // UserUsecase defines the interface for user-related use cases
-type UserUsecase interface {
-	UserFindByID(ctx context.Context, ID string) (*dto.UserTokenDTO, error)
+type AuthUsecase interface {
+	AuthRegister(ctx context.Context, req *dto.UserRegisterDTO) (*dto.UserTokenDTO, error)
+	AuthLogin(ctx context.Context, req *dto.UserLoginDTO) (*dto.UserTokenDTO, error)
 	//UpdateUser(id uint, username, email string) (*models.User, error)
 	//DeleteUser(id uint) error
 }

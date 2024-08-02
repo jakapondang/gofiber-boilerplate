@@ -39,7 +39,7 @@ func (r *userRepositoryImpl) FindByEmail(ctx context.Context, email string) (*mo
 	return &user, nil
 }
 
-// FindByEmail retrieves a user by email from the database
+// FindByEmail retrieves a user by ID from the database
 func (r *userRepositoryImpl) FindByID(ctx context.Context, ID string) (*models.User, error) {
 	var user models.User
 	err := r.DB.WithContext(ctx).Unscoped().Where("id = ?", ID).First(&user).Error

@@ -42,7 +42,7 @@ func (s *UserServiceImpl) Create(ctx context.Context, res *models.User) (*models
 	return res, nil
 }
 
-// GetUserByEmail retrieves a user by ID from the repository
+// GetUserByEmail retrieves a user by Email from the repository
 func (s *UserServiceImpl) GetUserByEmail(ctx context.Context, req *models.User) (*models.User, error) {
 	// Check if a user with the same email already exists
 	res, err := s.userRepo.FindByEmail(ctx, req.Email)
@@ -57,6 +57,17 @@ func (s *UserServiceImpl) GetUserByEmail(ctx context.Context, req *models.User) 
 	if !checkPass {
 		return nil, errors.New("User email and password doesnt match")
 	}
+	return res, nil
+}
+
+// GetUserByID retrieves a user by ID from the repository
+func (s *UserServiceImpl) GetUserByID(ctx context.Context, ID string) (*models.User, error) {
+	// Check if a user with the same email already exists
+	res, err := s.userRepo.FindByID(ctx, ID)
+	if err != nil {
+		return nil, errors.New("User not found")
+	}
+
 	return res, nil
 }
 
