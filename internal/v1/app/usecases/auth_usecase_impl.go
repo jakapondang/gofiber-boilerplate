@@ -151,14 +151,14 @@ func (u *authUsecaseImpl) ForgotPassword(ctx context.Context, req *dto.ForgotPas
 	mailData := dto.EmaiForgotPasswordDTO{
 		Username:   user.Username,
 		ResetToken: resp.ResetToken.String(),
-		ResetLink:  "http://iinvite.id/confirm-password/activate?token=" + resp.ResetToken.String(),
+		ResetLink:  "http://admin.id/confirm-password/activate?token=" + resp.ResetToken.String(),
 		Year:       time.Now().Year(),
 	}
 
 	// Setup Email
 	go func() {
 		// Send Email
-		err = mailpack.SendMail(res.Email, "IInvite Forgot password", mailData, "forgot_password.html")
+		err = mailpack.SendMail(res.Email, "admin Forgot password", mailData, "forgot_password.html")
 		if err != nil {
 			panic(
 				"Failed Sent Email:" + err.Error(),

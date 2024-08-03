@@ -35,8 +35,8 @@ Try changing the config file database.url from db to localhost
 
    Update .env
    ```sh
-   #url: postgres://root:Iinvite3@db:5432/goboilerplate
-   url: postgres://root:Iinvite3@localhost:5432/goboilerplate
+   #url: postgres://admin:admin@db:5432/goboilerplate
+   url: postgres://admin:admin@localhost:5432/goboilerplate
 
 4. **Issue**
 
