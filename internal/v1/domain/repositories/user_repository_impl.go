@@ -28,10 +28,10 @@ func (r *userRepositoryImpl) Create(ctx context.Context, res *models.User) error
 	return nil
 }
 
-// FindByEmail retrieves a user by mail from the database
+// FindByEmail retrieves a user by mailpack from the database
 func (r *userRepositoryImpl) FindByEmail(ctx context.Context, email string) (*models.User, error) {
 	var user models.User
-	err := r.DB.WithContext(ctx).Unscoped().Where("mail = ?", email).First(&user).Error
+	err := r.DB.WithContext(ctx).Unscoped().Where("email = ?", email).First(&user).Error
 	if err != nil {
 		return nil, err
 	}

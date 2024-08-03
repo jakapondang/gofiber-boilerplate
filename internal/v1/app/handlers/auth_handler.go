@@ -86,3 +86,24 @@ func (h *authHandler) RefreshToken(c fiber.Ctx) error {
 
 	return middlewares.Send(c, fiber.StatusOK, resp)
 }
+
+// Auth handles Forgot Password
+func (h *authHandler) ForgotPassword(c fiber.Ctx) error {
+	var dto dto.ForgotPasswordDTO
+	if err := json.Unmarshal(c.Body(), &dto); err != nil {
+		if err != nil {
+			panic(msg.BadRequestError{
+				Message: err.Error(),
+			})
+		}
+	}
+
+	err := h.AuthUsecase.ForgotPassword(c.Context(), &dto)
+	if err != nil {
+		panic(msg.NotFoundError{
+			Message: err.Error(),
+		})
+	}
+
+	return middlewares.Send(c, fiber.StatusOK, dto)
+}

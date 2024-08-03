@@ -7,26 +7,28 @@ import (
 
 type RegisterDTO struct {
 	Username string `json:"username" validate:"required,min=3,max=50"`
-	Email    string `json:"mail" validate:"required,mail"`
+	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`
 }
+
 type LoginDTO struct {
-	Email    string `json:"mail" validate:"required,mail"`
+	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`
-}
-type RefreshTokenDTO struct {
-	RefreshToken string `json:"refreshToken" validate:"required"`
 }
 
 type UserTokenDTO struct {
 	ID                  string     `json:"id"`
 	Username            string     `json:"username"`
-	Email               string     `json:"mail"`
+	Email               string     `json:"email"`
 	IsVerifyEmail       bool       `json:"isVerifyEmail"`
 	IsVerifyPhoneNumber bool       `json:"isVerifyPhoneNumber"`
 	IsActive            bool       `json:"isActive"`
 	IsAdmin             bool       `json:"isAdmin"`
 	LastLogin           *time.Time `json:"lastLogin,omitempty"`
+}
+
+type RefreshTokenDTO struct {
+	RefreshToken string `json:"refreshToken" validate:"required"`
 }
 
 // Trasnform User Register DTO to Model User

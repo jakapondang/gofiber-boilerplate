@@ -1,16 +1,18 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/cors"
 	"github.com/gofiber/fiber/v3/middleware/recover"
 	"gofiber-boilerplatev3/internal/v1/interface/http/middlewares"
-	"gofiber-boilerplatev3/internal/v1/interface/http/routes"
+	v1 "gofiber-boilerplatev3/internal/v1/interface/http/routes"
 	"gofiber-boilerplatev3/pkg/infra/config"
 	"gofiber-boilerplatev3/pkg/infra/database"
 	"gofiber-boilerplatev3/pkg/utils"
 	"gofiber-boilerplatev3/pkg/utils/auth/jwt"
 	"gofiber-boilerplatev3/pkg/utils/logruspack"
+	"gofiber-boilerplatev3/pkg/utils/mailpack"
 	"strconv"
 )
 
@@ -24,6 +26,8 @@ func main() {
 	// Initialize JWT settings
 	// Set JWT config
 	jwt.SetConfig(config.AppConfig.JWT)
+	fmt.Println(config.AppConfig.Mail)
+	mailpack.SetConfig(config.AppConfig.Mail)
 
 	//setup fiber
 	app := fiber.New(utils.NewFiberError())

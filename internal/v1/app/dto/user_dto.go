@@ -10,7 +10,7 @@ type UserDTO struct {
 	//Password  string     `json:"password"`
 	ID                  string     `json:"id"`
 	Username            string     `json:"username"`
-	Email               string     `json:"mail"`
+	Email               string     `json:"email"`
 	FirstName           string     `json:"firstName,omitempty"`
 	LastName            string     `json:"lastName,omitempty"`
 	PhoneNumber         string     `json:"phoneNumber"`

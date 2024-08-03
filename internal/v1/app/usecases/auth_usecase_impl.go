@@ -2,22 +2,26 @@ package usecases
 
 import (
 	"context"
-	"fmt"
 	"gofiber-boilerplatev3/internal/v1/app/dto"
 	"gofiber-boilerplatev3/internal/v1/domain/services"
 	"gofiber-boilerplatev3/pkg/utils/auth/jwt"
+	"gofiber-boilerplatev3/pkg/utils/mailpack"
 	"gofiber-boilerplatev3/pkg/utils/msg"
 	"time"
 )
 
 // authUsecaseImpl implements the AuthUsecase interface
 type authUsecaseImpl struct {
-	userService services.UserService
+	UserService   services.UserService
+	PasswordReset services.PasswordResetService
 }
 
 // NewAuthUsecase creates a new instance of authUsecaseImpl
-func NewAuthUsecase(userService services.UserService) AuthUsecase {
-	return &authUsecaseImpl{userService: userService}
+func NewAuthUsecase(userService services.UserService, passwordReset services.PasswordResetService) AuthUsecase {
+	return &authUsecaseImpl{
+		UserService:   userService,
+		PasswordReset: passwordReset,
+	}
 }
 
 // AuthRegister creates a new user and returns the created user
@@ -27,7 +31,7 @@ func (u *authUsecaseImpl) AuthRegister(ctx context.Context, req *dto.RegisterDTO
 	// Create a new Model User
 	res := dto.NewRegisterUser(req)
 	//Create User
-	res, err := u.userService.Create(ctx, res)
+	res, err := u.UserService.CreateUser(ctx, res)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +60,7 @@ func (u *authUsecaseImpl) AuthLogin(ctx context.Context, req *dto.LoginDTO) (*jw
 	// Get a new Model User
 	res := dto.NewLoginUser(req)
 	//Get User By Email
-	res, err := u.userService.GetUserByEmail(ctx, res)
+	res, err := u.UserService.LoginUserByEmail(ctx, res)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -79,9 +83,9 @@ func (u *authUsecaseImpl) AuthLogin(ctx context.Context, req *dto.LoginDTO) (*jw
 	go func() {
 		now := time.Now()
 		res.LastLogin = &now
-		if err := u.userService.Update(ctx, res); err != nil {
+		if err := u.UserService.UpdateUser(ctx, res); err != nil {
 			// Handle error (log it, etc.)
-			fmt.Printf("Error updating user login: %v\n", err)
+			panic("Error Update User : " + err.Error())
 		}
 	}()
 
@@ -96,12 +100,12 @@ func (u *authUsecaseImpl) RefreshToken(ctx context.Context, req *dto.RefreshToke
 	// Validate Refresh token
 	token, err := jwt.ValidateRefreshToken(req.RefreshToken)
 	if err != nil {
-		return nil, err
+		panic(err.Error())
 	}
 	//Get User By ID
-	res, err := u.userService.GetUserByID(ctx, token.ID)
+	res, err := u.UserService.GetUserByID(ctx, token.ID)
 	if err != nil {
-		return nil, err
+		panic(err.Error())
 	}
 	resp := dto.NewTokenUser(res)
 	tokenAccess, err := jwt.GenerateAccessToken(resp)
@@ -117,4 +121,50 @@ func (u *authUsecaseImpl) RefreshToken(ctx context.Context, req *dto.RefreshToke
 		RefreshToken: tokenRefresh,
 	}
 	return &response, nil
+}
+
+// RefreshToken retrieves a user refresh token
+func (u *authUsecaseImpl) ForgotPassword(ctx context.Context, req *dto.ForgotPasswordDTO) error {
+	// Validation
+	msg.Validate(req)
+	// Get a new Model User
+	res := dto.NewForgotPasswordUser(req)
+
+	//Get User By Email
+	user, err := u.UserService.GetUserByEmail(ctx, res)
+	if err != nil {
+		panic(msg.BadRequestError{
+			Message: "Theres no such user email",
+		})
+	}
+
+	req.UserID = user.ID.String()                 // Add userID
+	req.ExpiresAt = time.Now().Add(1 * time.Hour) // expire at 1 hour
+
+	// Transform to model & Create Password reset
+	reset := dto.NewPasswordReset(req)
+	resp, err := u.PasswordReset.CreatePasswordResets(ctx, reset)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	mailData := dto.EmaiForgotPasswordDTO{
+		Username:   user.Username,
+		ResetToken: resp.ResetToken.String(),
+		ResetLink:  "http://iinvite.id/confirm-password/activate?token=" + resp.ResetToken.String(),
+		Year:       time.Now().Year(),
+	}
+
+	// Setup Email
+	go func() {
+		// Send Email
+		err = mailpack.SendMail(res.Email, "IInvite Forgot password", mailData, "forgot_password.html")
+		if err != nil {
+			panic(
+				"Failed Sent Email:" + err.Error(),
+			)
+		}
+	}()
+
+	return nil
 }

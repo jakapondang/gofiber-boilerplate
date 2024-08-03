@@ -6,8 +6,9 @@ import (
 )
 
 type UserService interface {
-	Create(ctx context.Context, res *models.User) (*models.User, error)
-	GetUserByEmail(ctx context.Context, req *models.User) (*models.User, error)
+	CreateUser(ctx context.Context, res *models.User) (*models.User, error)
+	LoginUserByEmail(ctx context.Context, req *models.User) (*models.User, error)
 	GetUserByID(ctx context.Context, ID string) (*models.User, error)
-	Update(ctx context.Context, res *models.User) error
+	UpdateUser(ctx context.Context, res *models.User) error
+	GetUserByEmail(ctx context.Context, req *models.User) (*models.User, error)
 }

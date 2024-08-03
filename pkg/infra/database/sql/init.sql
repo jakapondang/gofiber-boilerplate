@@ -1,7 +1,7 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE users (
-                       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                       id UUID PRIMARY KEY,  -- Removed DEFAULT uuid_generate_v4()
                        username VARCHAR(50) UNIQUE NOT NULL,
                        email VARCHAR(255) UNIQUE NOT NULL,
                        password_hash VARCHAR(255) NOT NULL,
@@ -42,3 +42,12 @@ CREATE TABLE user_roles (
 
 CREATE INDEX idx_user_roles_user_id ON user_roles(user_id);
 CREATE INDEX idx_user_roles_role_id ON user_roles(role_id);
+
+CREATE TABLE password_resets (
+                                 user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                                 reset_token UUID PRIMARY KEY,  -- No default value for UUID
+                                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                                 expires_at TIMESTAMPTZ NOT NULL,
+                                 used BOOLEAN DEFAULT FALSE,
+                                 CONSTRAINT reset_token_expiry CHECK (expires_at > CURRENT_TIMESTAMP)
+);

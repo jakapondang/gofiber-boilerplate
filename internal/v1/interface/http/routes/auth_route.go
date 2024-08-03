@@ -14,12 +14,14 @@ import (
 func SetupAuthRoutes(app *fiber.App, db *gorm.DB, config config.Config) {
 	// Initialize repositories
 	repo := repositories.NewUserRepository(db)
+	repoPasswordReset := repositories.NewPasswordResetRepository(db)
 
 	// Initialize services
 	service := services.NewUserService(repo)
+	servicePasswordReset := services.NewPasswordResetService(repoPasswordReset)
 
 	// Initialize use cases
-	usecase := usecases.NewAuthUsecase(service)
+	usecase := usecases.NewAuthUsecase(service, servicePasswordReset)
 
 	// Initialize handlers
 	handler := handlers.NewAuthHandler(usecase, config)
@@ -32,5 +34,6 @@ func SetupAuthRoutes(app *fiber.App, db *gorm.DB, config config.Config) {
 	v1.Post("/register", handler.AuthRegister)
 	v1.Post("/login", handler.AuthLogin)
 	v1.Post("/refresh-token", handler.RefreshToken)
+	v1.Post("/forgot-password", handler.ForgotPassword)
 
 }

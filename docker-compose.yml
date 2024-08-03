@@ -11,6 +11,7 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
       - ./pkg/infra/database/sql:/docker-entrypoint-initdb.d
+      #- /etc/api/[service]/pkg/infra/database/sql:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
     networks:
@@ -24,6 +25,7 @@ services:
       - "3000:3000"
     volumes:
       - ./configs:/app/configs
+#      - /etc/api/[service]/configs:/app/configs
     depends_on:
       - db
     networks:
