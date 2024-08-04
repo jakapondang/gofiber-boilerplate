@@ -11,7 +11,6 @@ type AuthUsecase interface {
 	AuthRegister(ctx context.Context, req *dto.RegisterDTO) (*jwt.Token, error)
 	AuthLogin(ctx context.Context, req *dto.LoginDTO) (*jwt.Token, error)
 	RefreshToken(ctx context.Context, req *dto.RefreshTokenDTO) (*jwt.Token, error)
-	ForgotPassword(ctx context.Context, req *dto.ForgotPasswordDTO) error
-	//UpdateUser(id uint, username, mailpack string) (*models.User, error)
-	//DeleteUser(id uint) error
+	PasswordResetRequest(ctx context.Context, req *dto.PasswordResetRequestDTO) error
+	PasswordResetUpdate(ctx context.Context, req *dto.PasswordResetUpdateRequestDTO) error
 }

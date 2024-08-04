@@ -3,9 +3,11 @@ package services
 import (
 	"context"
 	"errors"
+	"github.com/google/uuid"
 	"gofiber-boilerplatev3/internal/v1/domain/models"
 	"gofiber-boilerplatev3/internal/v1/domain/repositories"
 	"gofiber-boilerplatev3/pkg/utils/auth"
+	"gorm.io/gorm"
 )
 
 // UserServiceImpl provides business logic related to users
@@ -19,12 +21,12 @@ func NewUserService(userRepo repositories.UserRepository) UserService {
 }
 
 // CreateUser creates a new user and persists it in the repository
-func (s *UserServiceImpl) CreateUser(ctx context.Context, res *models.User) (*models.User, error) {
+func (s *UserServiceImpl) CreateUser(ctx context.Context, tx *gorm.DB, res *models.User) (*models.User, error) {
 
 	// Check if a user with the same mailpack already exists
-	existingUser, _ := s.userRepo.FindByEmail(ctx, res.Email)
+	existingUser, _ := s.userRepo.FindByEmail(ctx, tx, res.Email)
 	if existingUser != nil {
-		return nil, errors.New("user with this mailpack already exists")
+		return nil, errors.New("user with this email already exists")
 	}
 
 	//Create password hash
@@ -35,7 +37,7 @@ func (s *UserServiceImpl) CreateUser(ctx context.Context, res *models.User) (*mo
 	res.PasswordHash = passwordHash
 
 	// Save the user entity in the repository
-	if err := s.userRepo.Create(ctx, res); err != nil {
+	if err := s.userRepo.Create(ctx, tx, res); err != nil {
 		return nil, err
 	}
 
@@ -43,27 +45,30 @@ func (s *UserServiceImpl) CreateUser(ctx context.Context, res *models.User) (*mo
 }
 
 // LoginUserByEmail login a user by Email from the repository
-func (s *UserServiceImpl) LoginUserByEmail(ctx context.Context, req *models.User) (*models.User, error) {
+func (s *UserServiceImpl) LoginUserByEmail(ctx context.Context, tx *gorm.DB, req *models.User) (*models.User, error) {
 	// Check if a user with the same mailpack already exists
-	res, err := s.userRepo.FindByEmail(ctx, req.Email)
+	res, err := s.userRepo.FindByEmail(ctx, tx, req.Email)
 	if err != nil {
-		return nil, errors.New("User mailpack not found")
+		return nil, errors.New("User email not found")
 	}
+
 	// Check User Active
 	if !res.IsActive {
 		return nil, errors.New("User is not active , please contact administrator")
 	}
+
+	// Check Password
 	checkPass := auth.CheckPasswordHash(req.PasswordHash, res.PasswordHash)
 	if !checkPass {
-		return nil, errors.New("User mailpack and password doesnt match")
+		return nil, errors.New("User email and password doesnt match")
 	}
 	return res, nil
 }
 
 // GetUserByID retrieves a user by ID from the repository
-func (s *UserServiceImpl) GetUserByID(ctx context.Context, ID string) (*models.User, error) {
+func (s *UserServiceImpl) GetUserByID(ctx context.Context, tx *gorm.DB, ID uuid.UUID) (*models.User, error) {
 	// Check if a user with the same mailpack already exists
-	res, err := s.userRepo.FindByID(ctx, ID)
+	res, err := s.userRepo.FindByID(ctx, tx, ID)
 	if err != nil {
 		return nil, errors.New("User not found")
 	}
@@ -72,21 +77,36 @@ func (s *UserServiceImpl) GetUserByID(ctx context.Context, ID string) (*models.U
 }
 
 // Update a user and persists it in the repository
-func (s *UserServiceImpl) UpdateUser(ctx context.Context, res *models.User) error {
+func (s *UserServiceImpl) UpdateUser(ctx context.Context, tx *gorm.DB, res *models.User) error {
 	// Save the user entity in the repository
-	if err := s.userRepo.Update(ctx, res); err != nil {
+	if err := s.userRepo.Update(ctx, tx, res); err != nil {
 		return err
 	}
 	return nil
 }
 
 // GetUserByEmail retrieves a user by Email from the repository
-func (s *UserServiceImpl) GetUserByEmail(ctx context.Context, req *models.User) (*models.User, error) {
+func (s *UserServiceImpl) GetUserByEmail(ctx context.Context, tx *gorm.DB, req *models.User) (*models.User, error) {
 	// Check if a user with the same mailpack already exists
-	res, err := s.userRepo.FindByEmail(ctx, req.Email)
+	res, err := s.userRepo.FindByEmail(ctx, tx, req.Email)
 	if err != nil {
-		return nil, errors.New("User mailpack not found")
+		return nil, errors.New("User email not found")
 	}
 
 	return res, nil
+}
+
+// Update password user and persists it in the repository
+func (s *UserServiceImpl) UpdatePasswordUser(ctx context.Context, tx *gorm.DB, res *models.User) error {
+	//Create password hash
+	passwordHash, err := auth.HashPassword(res.PasswordHash)
+	if err != nil {
+		return err
+	}
+	res.PasswordHash = passwordHash
+	// Save the user entity in the repository
+	if err := s.userRepo.Update(ctx, tx, res); err != nil {
+		return err
+	}
+	return nil
 }

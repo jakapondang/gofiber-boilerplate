@@ -7,7 +7,7 @@ import (
 )
 
 type PasswordReset struct {
-	UserID     string    `gorm:"type:uuid;not null;column:user_id"`
+	UserID     uuid.UUID `gorm:"type:uuid;not null;column:user_id"`
 	ResetToken uuid.UUID `gorm:"type:uuid;primaryKey;column:reset_token"`
 	CreatedAt  time.Time `gorm:"default:current_timestamp;column:created_at"`
 	ExpiresAt  time.Time `gorm:"not null;column:expires_at"`

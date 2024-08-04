@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v3"
 	"gofiber-boilerplatev3/internal/v1/app/handlers"
 	"gofiber-boilerplatev3/internal/v1/app/usecases"
+	"gofiber-boilerplatev3/internal/v1/domain"
 	"gofiber-boilerplatev3/internal/v1/domain/repositories"
 	"gofiber-boilerplatev3/internal/v1/domain/services"
 	"gofiber-boilerplatev3/pkg/infra/config"
@@ -21,7 +22,8 @@ func SetupAuthRoutes(app *fiber.App, db *gorm.DB, config config.Config) {
 	servicePasswordReset := services.NewPasswordResetService(repoPasswordReset)
 
 	// Initialize use cases
-	usecase := usecases.NewAuthUsecase(service, servicePasswordReset)
+	trxDomain := domain.NewTrxDomain(db)
+	usecase := usecases.NewAuthUsecase(trxDomain, service, servicePasswordReset)
 
 	// Initialize handlers
 	handler := handlers.NewAuthHandler(usecase, config)
@@ -34,6 +36,7 @@ func SetupAuthRoutes(app *fiber.App, db *gorm.DB, config config.Config) {
 	v1.Post("/register", handler.AuthRegister)
 	v1.Post("/login", handler.AuthLogin)
 	v1.Post("/refresh-token", handler.RefreshToken)
-	v1.Post("/forgot-password", handler.ForgotPassword)
+	v1.Post("/password-reset", handler.PasswordResetRequest)
+	v1.Put("/password-reset", handler.PasswordResetUpdate)
 
 }

@@ -23,7 +23,7 @@ CREATE INDEX idx_users_created_at ON users(created_at);
 CREATE INDEX idx_users_updated_at ON users(updated_at);
 
 CREATE TABLE roles (
-                       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                       id UUID PRIMARY KEY,
                        name VARCHAR(50) UNIQUE NOT NULL,
                        description TEXT,
                        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,

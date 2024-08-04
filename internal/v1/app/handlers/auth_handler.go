@@ -87,9 +87,9 @@ func (h *authHandler) RefreshToken(c fiber.Ctx) error {
 	return middlewares.Send(c, fiber.StatusOK, resp)
 }
 
-// Auth handles Forgot Password
-func (h *authHandler) ForgotPassword(c fiber.Ctx) error {
-	var dto dto.ForgotPasswordDTO
+// Auth handles Password Reset Request
+func (h *authHandler) PasswordResetRequest(c fiber.Ctx) error {
+	var dto dto.PasswordResetRequestDTO
 	if err := json.Unmarshal(c.Body(), &dto); err != nil {
 		if err != nil {
 			panic(msg.BadRequestError{
@@ -98,12 +98,33 @@ func (h *authHandler) ForgotPassword(c fiber.Ctx) error {
 		}
 	}
 
-	err := h.AuthUsecase.ForgotPassword(c.Context(), &dto)
+	err := h.AuthUsecase.PasswordResetRequest(c.Context(), &dto)
 	if err != nil {
 		panic(msg.NotFoundError{
 			Message: err.Error(),
 		})
 	}
 
-	return middlewares.Send(c, fiber.StatusOK, dto)
+	return middlewares.Send(c, fiber.StatusOK, "Password reset requested")
+}
+
+// Auth handles Password Reset using token with new password
+func (h *authHandler) PasswordResetUpdate(c fiber.Ctx) error {
+	var dto dto.PasswordResetUpdateRequestDTO
+	if err := json.Unmarshal(c.Body(), &dto); err != nil {
+		if err != nil {
+			panic(msg.BadRequestError{
+				Message: err.Error(),
+			})
+		}
+	}
+
+	err := h.AuthUsecase.PasswordResetUpdate(c.Context(), &dto)
+	if err != nil {
+		panic(msg.NotFoundError{
+			Message: err.Error(),
+		})
+	}
+
+	return middlewares.Send(c, fiber.StatusOK, "Password reset requested")
 }
