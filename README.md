@@ -1,11 +1,3 @@
-If error
-
-failed to initialize database, got error failed to connect to `user=root database=goboilerplate`:
-hostname resolving error: lookup db: no such host
-lookup db: no such host
-
-Try changing the config file database.url from db to localhost
-
 # Boileplate 0.0.1
 
 ## Overview
@@ -38,7 +30,51 @@ Try changing the config file database.url from db to localhost
    #url: postgres://admin:admin@db:5432/goboilerplate
    url: postgres://admin:admin@localhost:5432/goboilerplate
 
-4. **Issue**
+4. **Problem**
+   1. If error ..failed to initialize database, got error 
+```
+   failed to connect to `user=root database=goboilerplate`:hostname resolving error:lookup db: no such host lookup db: no such host 
+   ```
+   Try changing the config file database.url from db to localhost
 
+5. **Notes**
+
+## File Structure
+
+Within the download you'll find the following directories and files:
+
+```
+root_dir/
+├── configs/
+├── internal/
+├───└──v1
+│      ├── app/
+│      │   ├── dto/
+│      │   ├── handlers/
+│      │   ├── usecases/
+│      ├── domain/
+│      │   ├── models/
+│      │   ├── repositories/
+│      │   ├── services/
+│      └── Interface/
+│         ├── grpc/
+│         └── http/
+│             ├── middlewares/
+│             └── routes/
+├── pkg/
+│   ├── infra/
+│   │   ├── config/
+│   │   └── database/
+│   │       └── sql/
+│   ├── msg/
+│   └── utils/
+│        ├── auth/
+│        ├── jwt/
+│        └── msg/
+├── scripts/
+├── main.go
+└── go.mod
+
+```
 ## Thank you
 for reviewing this project. Please feel free to reach out with any questions or feedback regarding this project.
