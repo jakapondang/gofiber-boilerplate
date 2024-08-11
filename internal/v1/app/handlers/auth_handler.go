@@ -27,8 +27,8 @@ func NewAuthHandler(authUsecase usecases.AuthUsecase, config config.Config) *aut
 // Auth handles POST requests for creating a new user
 func (h *authHandler) AuthRegister(c fiber.Ctx) error {
 
-	var dto dto.RegisterDTO
-	if err := json.Unmarshal(c.Body(), &dto); err != nil {
+	var req dto.RegisterDTO
+	if err := json.Unmarshal(c.Body(), &req); err != nil {
 		if err != nil {
 			panic(msg.BadRequestError{
 				Message: err.Error(),
@@ -36,7 +36,7 @@ func (h *authHandler) AuthRegister(c fiber.Ctx) error {
 		}
 	}
 	// Register User
-	resp, err := h.AuthUsecase.AuthRegister(c.Context(), &dto)
+	resp, err := h.AuthUsecase.AuthRegister(c.Context(), &req)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -46,8 +46,8 @@ func (h *authHandler) AuthRegister(c fiber.Ctx) error {
 
 // Auth handles GET requests for retrieving a user by ID
 func (h *authHandler) AuthLogin(c fiber.Ctx) error {
-	var dto dto.LoginDTO
-	if err := json.Unmarshal(c.Body(), &dto); err != nil {
+	var req dto.LoginDTO
+	if err := json.Unmarshal(c.Body(), &req); err != nil {
 		if err != nil {
 			panic(msg.BadRequestError{
 				Message: err.Error(),
@@ -55,7 +55,7 @@ func (h *authHandler) AuthLogin(c fiber.Ctx) error {
 		}
 	}
 	// Login User
-	resp, err := h.AuthUsecase.AuthLogin(c.Context(), &dto)
+	resp, err := h.AuthUsecase.AuthLogin(c.Context(), &req)
 	if err != nil {
 		panic(msg.NotFoundError{
 			Message: err.Error(),
@@ -68,8 +68,8 @@ func (h *authHandler) AuthLogin(c fiber.Ctx) error {
 
 // Auth handles GET requests for Refresh Token
 func (h *authHandler) RefreshToken(c fiber.Ctx) error {
-	var dto dto.RefreshTokenDTO
-	if err := json.Unmarshal(c.Body(), &dto); err != nil {
+	var req dto.RefreshTokenDTO
+	if err := json.Unmarshal(c.Body(), &req); err != nil {
 		if err != nil {
 			panic(msg.BadRequestError{
 				Message: err.Error(),
@@ -77,7 +77,7 @@ func (h *authHandler) RefreshToken(c fiber.Ctx) error {
 		}
 	}
 
-	resp, err := h.AuthUsecase.RefreshToken(c.Context(), &dto)
+	resp, err := h.AuthUsecase.RefreshToken(c.Context(), &req)
 	if err != nil {
 		panic(msg.NotFoundError{
 			Message: err.Error(),
@@ -89,8 +89,8 @@ func (h *authHandler) RefreshToken(c fiber.Ctx) error {
 
 // Auth handles Password Reset Request
 func (h *authHandler) PasswordResetRequest(c fiber.Ctx) error {
-	var dto dto.PasswordResetRequestDTO
-	if err := json.Unmarshal(c.Body(), &dto); err != nil {
+	var req dto.PasswordResetRequestDTO
+	if err := json.Unmarshal(c.Body(), &req); err != nil {
 		if err != nil {
 			panic(msg.BadRequestError{
 				Message: err.Error(),
@@ -98,7 +98,7 @@ func (h *authHandler) PasswordResetRequest(c fiber.Ctx) error {
 		}
 	}
 
-	err := h.AuthUsecase.PasswordResetRequest(c.Context(), &dto)
+	err := h.AuthUsecase.PasswordResetRequest(c.Context(), &req)
 	if err != nil {
 		panic(msg.NotFoundError{
 			Message: err.Error(),
@@ -110,8 +110,8 @@ func (h *authHandler) PasswordResetRequest(c fiber.Ctx) error {
 
 // Auth handles Password Reset using token with new password
 func (h *authHandler) PasswordResetUpdate(c fiber.Ctx) error {
-	var dto dto.PasswordResetUpdateRequestDTO
-	if err := json.Unmarshal(c.Body(), &dto); err != nil {
+	var req dto.PasswordResetUpdateRequestDTO
+	if err := json.Unmarshal(c.Body(), &req); err != nil {
 		if err != nil {
 			panic(msg.BadRequestError{
 				Message: err.Error(),
@@ -119,7 +119,7 @@ func (h *authHandler) PasswordResetUpdate(c fiber.Ctx) error {
 		}
 	}
 
-	err := h.AuthUsecase.PasswordResetUpdate(c.Context(), &dto)
+	err := h.AuthUsecase.PasswordResetUpdate(c.Context(), &req)
 	if err != nil {
 		panic(msg.NotFoundError{
 			Message: err.Error(),

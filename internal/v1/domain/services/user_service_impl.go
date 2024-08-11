@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/google/uuid"
 	"gofiber-boilerplatev3/internal/v1/domain/models"
 	"gofiber-boilerplatev3/internal/v1/domain/repositories"
@@ -79,9 +80,11 @@ func (s *UserServiceImpl) GetUserByID(ctx context.Context, tx *gorm.DB, ID uuid.
 // Update a user and persists it in the repository
 func (s *UserServiceImpl) UpdateUser(ctx context.Context, tx *gorm.DB, res *models.User) error {
 	// Save the user entity in the repository
+	fmt.Println("Service UpdateUser", res)
 	if err := s.userRepo.Update(ctx, tx, res); err != nil {
 		return err
 	}
+	fmt.Println("End Update")
 	return nil
 }
 

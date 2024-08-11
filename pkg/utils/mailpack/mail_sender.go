@@ -53,7 +53,7 @@ func SendMail(to, subject string, data any, templatePath string) error {
 
 	// Create and send the mailpack
 	m := gomail.NewMessage()
-	m.SetHeader("From", "no-reply@example.com")
+	m.SetHeader("From", "no-reply@jakapondan.com")
 	m.SetHeader("To", to)
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/html", body.String())
