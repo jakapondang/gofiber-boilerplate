@@ -24,8 +24,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    environment:
+      TZ: Asia/Jakarta
     volumes:
-      - ./configs:/app/configs
+      - /var/infra/api/logs:/app/logs
     depends_on:
       - db
     networks:
