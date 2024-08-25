@@ -25,6 +25,12 @@ WORKDIR /app
 # Copy the Pre-built binary file from the previous stage
 COPY --from=build /app/main .
 
+# Copy the config.yaml file
+COPY --from=build /app/configs/config.yaml ./configs/config.yaml
+
+# Copy the mailpack templates directory
+COPY --from=build /app/pkg/utils/mailpack/templates/ ./pkg/utils/mailpack/templates/
+
 # Install necessary libraries for running the app
 RUN apk add --no-cache ca-certificates
 

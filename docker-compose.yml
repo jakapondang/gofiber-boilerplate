@@ -2,21 +2,22 @@ version: '3.8'
 
 services:
   db:
-    image: postgres:latest
+    image: postgres:15-alpine
     container_name: goboilerplate-db
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: goboilerplate
+      TZ: Asia/Jakarta
     volumes:
       - db-data:/var/lib/postgresql/data
-      - ./pkg/infra/database/sql:/docker-entrypoint-initdb.d
-      #- /etc/api/[service]/pkg/infra/database/sql:/docker-entrypoint-initdb.d
+      - ./pkg/infra/database/sql:/docker-entrypoint-initdb.d:ro
     ports:
       - "5432:5432"
+    restart: unless-stopped
     networks:
       - app-network
-  app:
+  api:
     container_name: goboilerplate-api
     build:
       context: .
@@ -25,7 +26,6 @@ services:
       - "3000:3000"
     volumes:
       - ./configs:/app/configs
-#      - /etc/api/[service]/configs:/app/configs
     depends_on:
       - db
     networks:
